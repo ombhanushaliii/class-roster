@@ -1,84 +1,56 @@
 <?php
-session_start(); 
+session_start();
 
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "class roster";
+$dbname = "class_roster"; // Fixed space issue in database name
 
-
+// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);;
+    die("Connection failed: " . $conn->connect_error);
 }
 
-if (isset($_POST['SVVNetID']) && isset($_POST['password'])) {
+// Check if form data is submitted
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset($_POST['password'])) {
     $SVVNetID = trim($_POST['SVVNetID']);
     $password = $_POST['password'];
 
+    // Prepare and execute the query
     $stmt = $conn->prepare("SELECT SVVNetID, password FROM signupdetails WHERE SVVNetID = ?");
+    if (!$stmt) {
+        die("Query preparation failed: " . $conn->error);
+    }
     $stmt->bind_param("s", $SVVNetID);
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Check if user exists
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
+        // Verify password
         if (password_verify($password, $user['password'])) {
             $_SESSION['loggedin'] = true;
             $_SESSION['SVVNetID'] = $SVVNetID;
-            
-            echo "Login successful! Redirecting...";
+
+            echo "<p style='color:green;'>Login successful! Redirecting...</p>";
             header("refresh:2; url=index.html");
             exit();
         } else {
-            echo "Invalid password!";
+            echo "<p style='color:red;'>Invalid password!</p>";
         }
     } else {
-        echo "User not found!";
+        echo "<p style='color:red;'>User not found!</p>";
     }
 
     $stmt->close();
 } else {
-    echo "Form data not submitted properly.";
+    echo "<p style='color:red;'>Form data not submitted properly.</p>";
 }
 
 $conn->close();
 ?>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./login.css">
-    <title>Login</title>
-</head>
-<body>
-    <div class="login-box">
-        <div class="login-header">
-            <header>Login</header>
-        </div>
-
-        <form action="login.php" method="POST">
-            <div class="input-box">
-                <input type="text" name="SVVNetID" class="input-field" placeholder="SVVNetID" autocomplete="off" required>
-            </div>
-            <div class="input-box">
-                <input type="password" name="password" class="input-field" placeholder="Password" autocomplete="off" required>
-            </div>
-
-            <div class="input-submit">
-                <button type="submit" class="submit-btn">Sign In</button>
-            </div>
-        </form>
-
-        <div class="sign-up-link">
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
-        </div>
-    </div>
-</body>
-</html>
