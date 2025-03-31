@@ -142,14 +142,14 @@
     <nav>
         <div class="logo">Class Roster</div>
         <div class="nav-right">
-            <a href="/login.html" class="download-btn">Login</a>
+            <a href="signup.php" class="download-btn">Login</a>
         </div>
     </nav>
 
     <main class="hero">
         <h1>Class Roster</h1>
         <p class="subtitle"> Organize your student records, track attendance, and manage grades in one secure place.</p>
-        <a href="/login.php" class="cta-button">
+        <a href="signup.php" class="cta-button">
             Get Started
             <span class="arrow-icon">→</span>
         </a>

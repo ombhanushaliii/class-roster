@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "class roster"; // Fixed database name
+$dbname = "class-roster"; // Fixed database name
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -74,7 +74,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./signup.css">
+    <link rel="stylesheet" href="signup.css">
     <title>Sign Up</title>
 </head>
 <body>
@@ -99,7 +99,7 @@ $conn->close();
         </form>
     
         <div class="login-link">
-            <p>Already have an account? <a href="login.html">Login</a></p>
+            <p>Already have an account? <a href="login.php">Login</a></p>
         </div>
     </div>
 </body>
