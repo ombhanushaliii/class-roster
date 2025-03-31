@@ -4,7 +4,7 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "class-roster";
+$dbname = "class_roster";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
             $_SESSION['SVVNetID'] = $SVVNetID;
 
             echo "<p style='color:green;'>Login successful! Redirecting...</p>";
-            header("refresh:2; url=index.php");
+            header("refresh:1; url=dashboard.php");
             exit();
         } else {
             echo "<p style='color:red;'>Invalid password!</p>";
@@ -42,8 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
     }
 
     $stmt->close();
-} else {
-    echo "<p style='color:red;'>Form data not submitted properly.</p>";
 }
 
 $conn->close();

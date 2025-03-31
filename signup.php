@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "class-roster"; // Fixed database name
+$dbname = "class_roster"; // Fixed database name
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             echo "Signup successful! Redirecting to login page...";
-            header("refresh:2; url=login.html"); // Redirect to login page after 2 seconds
+            header("refresh:2; url=login.php"); // Redirect to login page after 2 seconds
         } else {
             echo "Error: " . $stmt->error;
         }
