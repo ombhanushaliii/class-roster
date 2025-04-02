@@ -182,7 +182,7 @@
                 <img src="/api/placeholder/120/120" alt="Student Photo">
             </div>
             <div class="profile-info">
-                <h1>Aditya Sharma</h1>
+                <h1>Om Anand Jha</h1>
                 <h2>Bachelor of Technology Computer Engineering</h2>
                 <h2>Second Year</h2>
             </div>
@@ -193,27 +193,27 @@
             <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">Full Name</div>
-                    <div class="info-value">Aditya Sharma</div>
+                    <div class="info-value">Om Anand Jha</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Date of Birth</div>
-                    <div class="info-value">15-JUN-2004</div>
+                    <div class="info-value">26-FEB-2006</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Father's Name</div>
-                    <div class="info-value">Rajesh Sharma</div>
+                    <div class="info-value">Arbind Jha</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Mother's Name</div>
-                    <div class="info-value">Priya Sharma</div>
+                    <div class="info-value">Ranjana Jha</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">SVVN ID</div>
-                    <div class="info-value">SVVN2023CS104</div>
+                    <div class="info-value">SVVN2023CS214</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">College</div>
-                    <div class="info-value">College of Engineering</div>
+                    <div class="info-value">K.J Somaiya College of Engineering</div>
                 </div>
             </div>
         </div>
@@ -223,19 +223,19 @@
             <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">Email Address</div>
-                    <div class="info-value"><a href="mailto:aditya23@college.edu">aditya23@college.edu</a></div>
+                    <div class="info-value"><a href="mailto:omanand23@somaiya.edu">omanand23@somaiya.edu</a></div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Phone Number</div>
-                    <div class="info-value">9876543210</div>
+                    <div class="info-value">+91 8097795781</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Address</div>
-                    <div class="info-value">123 College Road, Tech Park, Mumbai - 400076</div>
+                    <div class="info-value">Vinayak Park-A,Titwala,421605</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Emergency Contact</div>
-                    <div class="info-value">9876543211 (Rajesh Sharma)</div>
+                    <div class="info-value">9876543211(Ayush Anand)</div>
                 </div>
             </div>
         </div>
