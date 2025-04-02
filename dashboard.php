@@ -193,8 +193,18 @@ $studentName = "Student";
         
         .photo-card {
             height: 256px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
-        
+        .college-image {
+            width: 110%;
+            height: 125%;
+            justify-content:; 
+            border-radius: 16px;
+        }
         .card-title {
             font-size: 1.25rem;
             font-weight: 600;
@@ -359,9 +369,9 @@ $studentName = "Student";
 
     <main>
         <div class="grid-container">
-            <!-- Photo Rectangle -->
+            <!-- Profile Photo -->
             <div class="card photo-card">
-                
+                <img src="./assets/college.png" alt="College" class="college-image">
             </div>
 
             <!-- Welcome Message -->
