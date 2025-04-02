@@ -12,6 +12,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$error_message = ""; // Initialize error message
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset($_POST['password'])) {
     $SVVNetID = trim($_POST['SVVNetID']);
     $password = $_POST['password'];
@@ -31,14 +33,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
             $_SESSION['loggedin'] = true;
             $_SESSION['SVVNetID'] = $SVVNetID;
 
-            echo "<p style='color:green;'>Login successful! Redirecting...</p>";
+            echo "<p style='color:green; text-align:center;'>Login successful! Redirecting...</p>";
             header("refresh:1; url=dashboard.php");
             exit();
         } else {
-            echo "<p style='color:red;'>Invalid password!</p>";
+            $error_message = "Invalid password!";
         }
     } else {
-        echo "<p style='color:red;'>User not found!</p>";
+        $error_message = "User not found!";
     }
 
     $stmt->close();
@@ -46,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -56,6 +57,13 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="login.css">
     <title>Login</title>
+    <style>
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <table width="100%" height="100%">
@@ -75,6 +83,9 @@ $conn->close();
                         <div class="input-submit">
                             <button type="submit" class="submit-btn" id="submit">Sign In</button>
                         </div>
+                        <?php if (!empty($error_message)): ?>
+                            <div class="error-message"><?php echo $error_message; ?></div>
+                        <?php endif; ?>
                     </div>
                 </form>
             </td>
