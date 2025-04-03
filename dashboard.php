@@ -202,7 +202,7 @@ $studentName = "Student";
         .college-image {
             width: 110%;
             height: 125%;
-            justify-content:; 
+            object-fit: cover;
             border-radius: 16px;
         }
         .card-title {
