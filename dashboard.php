@@ -16,8 +16,8 @@ try {
 // Fetch lectures data
 // In a real application, you would fetch this from the database
 $lectures = [
-    ['name' => 'AOAL', 'time' => '9:00 - 11:00', 'faculty' => 'AOM'],
-    ['name' => 'RDBMSL', 'time' => '11:00 - 13:00', 'faculty' => 'VAB'],
+    ['name' => 'AOA', 'time' => '9:00 - 11:00', 'faculty' => 'AOM'],
+    ['name' => 'RDBMS', 'time' => '11:00 - 13:00', 'faculty' => 'VAB'],
     ['name' => 'PSOT', 'time' => '14:00 - 15:00', 'faculty' => 'Virat'],
 ];
 
@@ -228,13 +228,29 @@ $studentName = "Student";
             gap: 16px;
         }
         
-        .lecture-item {
+        .lecture-icon {
+            height: 8%;
+            width: 8%;
             position: relative;
+            align-items: center;
+            align-items: 
             padding: 16px;
             background-color: #f9fafb;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s;
+        }
+
+        .lecture-item {
+            display: flex;
+            align-items: center;
+            gap: 8px; 
+        }
+
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+            color: #6b7280; 
         }
         
         .lecture-item:hover {
@@ -386,6 +402,7 @@ $studentName = "Student";
                 <div class="lecture-list">
                     <?php foreach ($lectures as $index => $lecture): ?>
                     <div class="lecture-item">
+                        <img src="./assets/comps lab.svg" alt="Lecture" class="lecture-icon">
                         <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
                         
                         <!-- Hover Details -->
