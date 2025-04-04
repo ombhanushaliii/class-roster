@@ -17,6 +17,6 @@ The Class Roster System is a web-based application designed to manage student at
 ## Tech Stack
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: PHP
-- **Database**: MySQL
+- **Database**: PostgreSQL
 - **Server**: XAMPP (Apache, MySQL, PHP)
 
