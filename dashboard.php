@@ -1,32 +1,26 @@
 <?php
-// Database connection
 $servername = 'localhost';
 $dbname = 'class_roster';
 $username = 'root';
 $password = '';
 
 try {
-    // Establish PDO connection
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Fetch lectures data from database
 $lectures = [];
 try {
-    // Prepare and execute SQL query to fetch timetable data
     $stmt = $conn->prepare("SELECT name, time, faculty FROM lectures ORDER BY time");
     $stmt->execute();
     
-    // Fetch all results as an associative array
     $lectures = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error fetching timetable: " . $e->getMessage();
 }
 
-// Student name - in a real app, you would get this from the session
 $studentName = "Neekunj";
 ?>
 
@@ -37,7 +31,7 @@ $studentName = "Neekunj";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClassRoster - Student Dashboard</title>
     <style>
-        /* Reset and base styles */
+        /*Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -247,6 +241,8 @@ $studentName = "Neekunj";
             position: relative;
             padding: 8px;
             border-radius: 8px;
+            background-color: #f9fafb;
+            cursor: pointer;
         }
 
         .icon-sm {
@@ -328,7 +324,51 @@ $studentName = "Neekunj";
             width: 16px;
             height: 16px;
         }
+        
+        /* Fullscreen toggle styles */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fullscreen-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .card.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            margin: 0;
+            border-radius: 0;
+            overflow-y: auto;
+        }
+
+        .card.fullscreen .lecture-list {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
     </style>
+    <script src="fullscreen.js"></script>
 </head>
 <body>
     <!-- SVG Icons -->
@@ -344,6 +384,12 @@ $studentName = "Neekunj";
         </symbol>
         <symbol id="icon-user" viewBox="0 0 24 24">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 7a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="icon-expand" viewBox="0 0 24 24">
+            <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zm-11 0h7v7H3v-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="icon-collapse" viewBox="0 0 24 24">
+            <path d="M15 3h6v6m0-6l-7 7M9 21H3v-6m0 6l7-7M21 9v6h-6m6 0l-7-7M3 9v6h6m-6 0l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
     </svg>
 
@@ -399,8 +445,13 @@ $studentName = "Neekunj";
             </div>
 
             <!-- Timetable -->
-            <div class="card">
-                <h2 class="card-title">Timetable</h2>
+            <div class="card" id="timetable-card">
+                <div class="card-header">
+                    <h2 class="card-title">Timetable</h2>
+                    <button id="fullscreen-toggle" class="fullscreen-button">
+                        <svg class="icon icon-sm fullscreen-icon"><use href="#icon-expand"></use></svg>
+                    </button>
+                </div>
                 <div class="lecture-list">
                     <?php if (count($lectures) > 0): ?>
                         <?php foreach ($lectures as $lecture): ?>
