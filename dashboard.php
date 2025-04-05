@@ -333,19 +333,16 @@ $studentName = "Neekunj";
             margin-bottom: 16px;
         }
 
-        .fullscreen-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Animation styles */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        .fullscreen-button:hover {
-            background-color: #f3f4f6;
+        .card.animating {
+            transition: all 0.5s ease;
+            animation: pulse 1s ease;
         }
 
         .card.fullscreen {
@@ -361,11 +358,40 @@ $studentName = "Neekunj";
             margin: 0;
             border-radius: 0;
             overflow-y: auto;
+            transition: all 0.5s ease;
         }
 
         .card.fullscreen .lecture-list {
             max-height: calc(100vh - 120px);
             overflow-y: auto;
+        }
+
+        /* New toggle button styles for the arrows */
+        .fullscreen-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .fullscreen-button:hover {
+            background-color: #f3f4f6;
+            transform: scale(1.2);
+        }
+
+        .fullscreen-icon {
+            transition: all 0.3s ease;
+        }
+
+        /* Updated SVG styles for the arrows */
+        #icon-expand path, #icon-collapse path {
+            stroke: #4b5563;
+            stroke-width: 2;
         }
     </style>
     <script src="fullscreen.js"></script>
@@ -385,11 +411,15 @@ $studentName = "Neekunj";
         <symbol id="icon-user" viewBox="0 0 24 24">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 7a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
+        
+        <!-- Updated expand/collapse icons with 2 arrows -->
         <symbol id="icon-expand" viewBox="0 0 24 24">
-            <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zm-11 0h7v7H3v-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 3h6v6M9 21H3v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
         <symbol id="icon-collapse" viewBox="0 0 24 24">
-            <path d="M15 3h6v6m0-6l-7 7M9 21H3v-6m0 6l7-7M21 9v6h-6m6 0l-7-7M3 9v6h6m-6 0l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 9h6V3M15 21h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 9l7 7M21 15l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
     </svg>
 
