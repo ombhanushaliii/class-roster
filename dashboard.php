@@ -13,16 +13,21 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Fetch lectures data
-// In a real application, you would fetch this from the database
-$lectures = [
-    ['name' => 'AOA', 'time' => '9:00 - 11:00', 'faculty' => 'AOM'],
-    ['name' => 'RDBMS', 'time' => '11:00 - 13:00', 'faculty' => 'VAB'],
-    ['name' => 'PSOT', 'time' => '14:00 - 15:00', 'faculty' => 'Virat'],
-];
+// Fetch lectures data from database
+$lectures = [];
+try {
+    // Prepare and execute SQL query to fetch timetable data
+    $stmt = $conn->prepare("SELECT name, time, faculty FROM lectures ORDER BY time");
+    $stmt->execute();
+    
+    // Fetch all results as an associative array
+    $lectures = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching timetable: " . $e->getMessage();
+}
 
 // Student name - in a real app, you would get this from the session
-$studentName = "Student";
+$studentName = "Neekunj";
 ?>
 
 <!DOCTYPE html>
@@ -229,22 +234,19 @@ $studentName = "Student";
         }
         
         .lecture-icon {
-            height: 8%;
-            width: 8%;
+            height: 24px;
+            width: 24px;
             position: relative;
             align-items: center;
-            align-items: 
-            padding: 16px;
-            background-color: #f9fafb;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
         }
 
         .lecture-item {
             display: flex;
             align-items: center;
-            gap: 8px; 
+            gap: 12px; 
+            position: relative;
+            padding: 8px;
+            border-radius: 8px;
         }
 
         .icon-sm {
@@ -400,19 +402,28 @@ $studentName = "Student";
             <div class="card">
                 <h2 class="card-title">Timetable</h2>
                 <div class="lecture-list">
-                    <?php foreach ($lectures as $index => $lecture): ?>
-                    <div class="lecture-item">
-                        <img src="./assets/comps lab.svg" alt="Lecture" class="lecture-icon">
-                        <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
-                        
-                        <!-- Hover Details -->
-                        <div class="lecture-details">
-                            <p class="detail-name"><strong><?php echo htmlspecialchars($lecture['name']); ?></strong></p>
-                            <p class="detail-time"><?php echo htmlspecialchars($lecture['time']); ?></p>
-                            <p class="detail-faculty"><?php echo htmlspecialchars($lecture['faculty']); ?></p>
+                    <?php if (count($lectures) > 0): ?>
+                        <?php foreach ($lectures as $lecture): ?>
+                        <div class="lecture-item">
+                            <?php 
+                            // Choose icon based on whether the lecture name contains "L"
+                            $iconPath = strpos($lecture['name'], 'L') !== false ? 
+                                "./assets/comps lab.svg" : "./assets/book lecture.svg";
+                            ?>
+                            <img src="<?php echo $iconPath; ?>" alt="<?php echo strpos($lecture['name'], 'L') !== false ? 'Lab' : 'Lecture'; ?>" class="lecture-icon">
+                            <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
+                            
+                            <!-- Hover Details -->
+                            <div class="lecture-details">
+                                <p class="detail-name"><strong><?php echo htmlspecialchars($lecture['name']); ?></strong></p>
+                                <p class="detail-time"><?php echo htmlspecialchars($lecture['time']); ?></p>
+                                <p class="detail-faculty"><?php echo htmlspecialchars($lecture['faculty']); ?></p>
+                            </div>
                         </div>
-                    </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No lectures found in the timetable.</p>
+                    <?php endif; ?>
                 </div>
             </div>
 
