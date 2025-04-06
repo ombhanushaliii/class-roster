@@ -259,29 +259,95 @@ $studentName = "Neekunj";
             font-weight: 500;
         }
         
+        /* Updated hover details styles */
         .lecture-details {
             position: absolute;
             left: 0;
             top: 100%;
             margin-top: 8px;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             z-index: 10;
-            width: 100%;
+            width: 300px; /* Fixed width instead of 100% */
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.2s, visibility 0.2s;
+            transition: all 0.3s ease;
+            transform: translateY(10px);
+            left: -20px; /* Offset to make it look better */
+            border-left: 4px solid #3b82f6;
         }
         
         .lecture-item:hover .lecture-details {
             opacity: 1;
             visibility: visible;
+            transform: translateY(0);
         }
         
-        .detail-faculty, .detail-time {
+        /* Style the popup content more attractively */
+        .detail-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        
+        .detail-time {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
             color: #4b5563;
+        }
+        
+        .detail-time::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .detail-faculty {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            color: #4b5563;
+        }
+        
+        .detail-faculty::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        /* Add a decorative element at the top */
+        .lecture-details::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: 30px;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            transform: rotate(45deg);
+            box-shadow: -3px -3px 5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* For click functionality with the JavaScript file */
+        .lecture-details.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
         
         /* Report card section */
@@ -393,8 +459,36 @@ $studentName = "Neekunj";
             stroke: #4b5563;
             stroke-width: 2;
         }
+        
+        /* Button styles for the popup */
+        .popup-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            padding: 6px 12px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .btn-secondary {
+            padding: 6px 12px;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
     </style>
     <script src="fullscreen.js"></script>
+    <script src="lecture-popup.js"></script>
 </head>
 <body>
     <!-- SVG Icons -->
@@ -494,11 +588,19 @@ $studentName = "Neekunj";
                             <img src="<?php echo $iconPath; ?>" alt="<?php echo strpos($lecture['name'], 'L') !== false ? 'Lab' : 'Lecture'; ?>" class="lecture-icon">
                             <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
                             
-                            <!-- Hover Details -->
+                            <!-- Enhanced Hover Details -->
                             <div class="lecture-details">
-                                <p class="detail-name"><strong><?php echo htmlspecialchars($lecture['name']); ?></strong></p>
+                                <p class="detail-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
                                 <p class="detail-time"><?php echo htmlspecialchars($lecture['time']); ?></p>
                                 <p class="detail-faculty"><?php echo htmlspecialchars($lecture['faculty']); ?></p>
+                                
+                                <!-- Add buttons for additional actions -->
+                                <?php if (strpos($lecture['name'], 'L') !== false): ?>
+                                <div class="popup-actions">
+                                    <button class="btn-primary">View Materials</button>
+                                    <button class="btn-secondary">Details</button>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <?php endforeach; ?>
