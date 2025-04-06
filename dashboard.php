@@ -486,6 +486,84 @@ $studentName = "Neekunj";
             font-size: 0.8rem;
             cursor: pointer;
         }
+        
+        /* Fullscreen lecture item styles */
+        .card.fullscreen .lecture-item {
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+
+        .lecture-item.fullscreen-item {
+            display: block;
+            background-color: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .lecture-item.fullscreen-item .lecture-details {
+            position: static !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            margin-top: 12px;
+            padding: 12px;
+            width: 100%;
+            box-shadow: none;
+            border-left: none;
+            background-color: white;
+            border-radius: 8px;
+            transform: none;
+            transition: none;
+        }
+
+        .lecture-item.fullscreen-item .lecture-details::before {
+            display: none;
+        }
+
+        /* Arrange lecture header and content in fullscreen mode */
+        .lecture-item.fullscreen-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lecture-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lecture-item.fullscreen-item .lecture-header {
+            margin-bottom: 12px;
+        }
+
+        /* Animation for expanding lectures in fullscreen */
+        .card.fullscreen .lecture-item {
+            animation: slide-in 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add animation delay for each item */
+        .card.fullscreen .lecture-item:nth-child(1) { animation-delay: 0.1s; }
+        .card.fullscreen .lecture-item:nth-child(2) { animation-delay: 0.2s; }
+        .card.fullscreen .lecture-item:nth-child(3) { animation-delay: 0.3s; }
+        .card.fullscreen .lecture-item:nth-child(4) { animation-delay: 0.4s; }
+        .card.fullscreen .lecture-item:nth-child(5) { animation-delay: 0.5s; }
+        .card.fullscreen .lecture-item:nth-child(6) { animation-delay: 0.6s; }
+        .card.fullscreen .lecture-item:nth-child(7) { animation-delay: 0.7s; }
+        .card.fullscreen .lecture-item:nth-child(8) { animation-delay: 0.8s; }
     </style>
     <script src="fullscreen.js"></script>
     <script src="lecture-popup.js"></script>
@@ -580,13 +658,15 @@ $studentName = "Neekunj";
                     <?php if (count($lectures) > 0): ?>
                         <?php foreach ($lectures as $lecture): ?>
                         <div class="lecture-item">
-                            <?php 
-                            // Choose icon based on whether the lecture name contains "L"
-                            $iconPath = strpos($lecture['name'], 'L') !== false ? 
-                                "./assets/comps lab.svg" : "./assets/book lecture.svg";
-                            ?>
-                            <img src="<?php echo $iconPath; ?>" alt="<?php echo strpos($lecture['name'], 'L') !== false ? 'Lab' : 'Lecture'; ?>" class="lecture-icon">
-                            <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
+                            <div class="lecture-header">
+                                <?php 
+                                // Choose icon based on whether the lecture name contains "L"
+                                $iconPath = strpos($lecture['name'], 'L') !== false ? 
+                                    "./assets/comps lab.svg" : "./assets/book lecture.svg";
+                                ?>
+                                <img src="<?php echo $iconPath; ?>" alt="<?php echo strpos($lecture['name'], 'L') !== false ? 'Lab' : 'Lecture'; ?>" class="lecture-icon">
+                                <p class="lecture-name"><?php echo htmlspecialchars($lecture['name']); ?></p>
+                            </div>
                             
                             <!-- Enhanced Hover Details -->
                             <div class="lecture-details">

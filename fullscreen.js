@@ -1,3 +1,8 @@
+/**
+ * ClassRoster - Fullscreen Toggle Script
+ * Handles the expansion of timetable card to fullscreen mode
+ */
+
 document.addEventListener('DOMContentLoaded', function() 
 {
     function fullscreen_toggle() 
@@ -5,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function()
         const timetableCard = document.getElementById('timetable-card');
         const toggleButton = document.getElementById('fullscreen-toggle');
         const iconUse = toggleButton.querySelector('use');
+        const lectureItems = document.querySelectorAll('.lecture-item');
         
         // Add animation class
         timetableCard.classList.add('animating');
@@ -15,6 +21,18 @@ document.addEventListener('DOMContentLoaded', function()
                 timetableCard.classList.remove('fullscreen');
                 iconUse.setAttribute('href', '#icon-expand');
                 document.body.style.overflow = '';
+                
+                // Restore normal lecture item view
+                lectureItems.forEach(item => {
+                    item.classList.remove('fullscreen-item');
+                    const details = item.querySelector('.lecture-details');
+                    if (details) {
+                        details.style.position = 'absolute';
+                        details.style.opacity = '0';
+                        details.style.visibility = 'hidden';
+                    }
+                });
+                
                 setTimeout(function() {
                     timetableCard.classList.remove('animating');
                 }, 300);
@@ -25,6 +43,18 @@ document.addEventListener('DOMContentLoaded', function()
                 timetableCard.classList.add('fullscreen');
                 iconUse.setAttribute('href', '#icon-collapse');
                 document.body.style.overflow = 'hidden';
+                
+                // Switch to expanded lecture item view
+                lectureItems.forEach(item => {
+                    item.classList.add('fullscreen-item');
+                    const details = item.querySelector('.lecture-details');
+                    if (details) {
+                        details.style.position = 'static';
+                        details.style.opacity = '1';
+                        details.style.visibility = 'visible';
+                    }
+                });
+                
                 setTimeout(function() {
                     timetableCard.classList.remove('animating');
                 }, 300);
