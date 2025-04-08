@@ -11,17 +11,17 @@ document.addEventListener('DOMContentLoaded', function()
         const toggleButton = document.getElementById('fullscreen-toggle');
         const iconUse = toggleButton.querySelector('use');
         const lectureItems = document.querySelectorAll('.lecture-item');
-        
+
         // Add animation class
         timetableCard.classList.add('animating');
-        
+
         if (timetableCard.classList.contains('fullscreen')) {
             // Exit fullscreen
             setTimeout(function() {
                 timetableCard.classList.remove('fullscreen');
                 iconUse.setAttribute('href', '#icon-expand');
                 document.body.style.overflow = '';
-                
+
                 // Restore normal lecture item view
                 lectureItems.forEach(item => {
                     item.classList.remove('fullscreen-item');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function()
                         details.style.visibility = 'hidden';
                     }
                 });
-                
+
                 setTimeout(function() {
                     timetableCard.classList.remove('animating');
                 }, 300);
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function()
                 timetableCard.classList.add('fullscreen');
                 iconUse.setAttribute('href', '#icon-collapse');
                 document.body.style.overflow = 'hidden';
-                
+
                 // Switch to expanded lecture item view
                 lectureItems.forEach(item => {
                     item.classList.add('fullscreen-item');
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function()
                         details.style.visibility = 'visible';
                     }
                 });
-                
+
                 setTimeout(function() {
                     timetableCard.classList.remove('animating');
                 }, 300);
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function()
     if (fullscreenToggle) {
         fullscreenToggle.addEventListener('click', fullscreen_toggle);
     }
-    
+
     // Add ESC key to exit fullscreen
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
