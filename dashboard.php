@@ -243,6 +243,7 @@ $studentName = "Neekunj";
             border-radius: 8px;
             background-color: #f9fafb;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .icon-sm {
@@ -253,6 +254,8 @@ $studentName = "Neekunj";
         
         .lecture-item:hover {
             background-color: #f3f4f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
         
         .lecture-name {
@@ -399,16 +402,76 @@ $studentName = "Neekunj";
             margin-bottom: 16px;
         }
 
-        /* Animation styles */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* ENHANCED ANIMATION STYLES */
+        /* Animation keyframes */
+        @keyframes fullscreen-expand {
+            0% { 
+                transform: scale(1);
+                border-radius: 16px;
+            }
+            20% { 
+                transform: scale(1.03);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            }
+            100% { 
+                transform: scale(1);
+                border-radius: 0;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+            }
         }
 
-        .card.animating {
-            transition: all 0.5s ease;
-            animation: pulse 1s ease;
+        @keyframes fullscreen-collapse {
+            0% { 
+                transform: scale(1);
+                border-radius: 0;
+            }
+            30% { 
+                transform: scale(0.95);
+            }
+            60% { 
+                transform: scale(1.02);
+                border-radius: 8px;
+            }
+            100% { 
+                transform: scale(1);
+                border-radius: 16px;
+            }
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoom-in {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Card transition states */
+        .card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .card.fullscreen {
@@ -424,76 +487,76 @@ $studentName = "Neekunj";
             margin: 0;
             border-radius: 0;
             overflow-y: auto;
-            transition: all 0.5s ease;
+            animation: fullscreen-expand 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .card.fullscreen.collapsing {
+            animation: fullscreen-collapse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .card.fullscreen .lecture-list {
             max-height: calc(100vh - 120px);
             overflow-y: auto;
+            padding: 10px;
         }
 
-        /* New toggle button styles for the arrows */
+        /* Enhanced fullscreen button styles */
         .fullscreen-button {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .fullscreen-button:hover {
-            background-color: #f3f4f6;
-            transform: scale(1.2);
+        .fullscreen-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(59, 130, 246, 0);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .fullscreen-button:hover:before {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .fullscreen-button:active {
+            transform: scale(0.95);
         }
 
         .fullscreen-icon {
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
 
-        /* Updated SVG styles for the arrows */
-        #icon-expand path, #icon-collapse path {
-            stroke: #4b5563;
-            stroke-width: 2;
+        .fullscreen-button:hover .fullscreen-icon {
+            transform: scale(1.2);
         }
-        
-        /* Button styles for the popup */
-        .popup-actions {
-            margin-top: 15px;
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            padding: 6px 12px;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        
-        .btn-secondary {
-            padding: 6px 12px;
-            background-color: #f3f4f6;
-            color: #4b5563;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        
-        /* Fullscreen lecture item styles */
+
+        /* Enhanced lecture item styles in fullscreen mode */
         .card.fullscreen .lecture-item {
             padding: 16px;
             margin-bottom: 16px;
             border-radius: 12px;
             border-left: 4px solid #3b82f6;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
+        }
+
+        .card.fullscreen .lecture-item:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
         .lecture-item.fullscreen-item {
@@ -501,6 +564,7 @@ $studentName = "Neekunj";
             background-color: #f9fafb;
             padding: 16px;
             border-radius: 12px;
+            animation: zoom-in 0.5s forwards;
         }
 
         .lecture-item.fullscreen-item .lecture-details {
@@ -508,14 +572,17 @@ $studentName = "Neekunj";
             opacity: 1 !important;
             visibility: visible !important;
             margin-top: 12px;
-            padding: 12px;
+            padding: 16px;
             width: 100%;
-            box-shadow: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             border-left: none;
             background-color: white;
             border-radius: 8px;
             transform: none;
             transition: none;
+            animation: fade-in 0.4s forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
         }
 
         .lecture-item.fullscreen-item .lecture-details::before {
@@ -536,34 +603,44 @@ $studentName = "Neekunj";
 
         .lecture-item.fullscreen-item .lecture-header {
             margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* Animation for expanding lectures in fullscreen */
         .card.fullscreen .lecture-item {
-            animation: slide-in 0.3s ease forwards;
+            animation: slide-in 0.5s ease forwards;
             opacity: 0;
         }
 
-        @keyframes slide-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Add animation delay for each item with increased timing */
+        .card.fullscreen .lecture-item:nth-child(1) { animation-delay: 0.2s; }
+        .card.fullscreen .lecture-item:nth-child(2) { animation-delay: 0.3s; }
+        .card.fullscreen .lecture-item:nth-child(3) { animation-delay: 0.4s; }
+        .card.fullscreen .lecture-item:nth-child(4) { animation-delay: 0.5s; }
+        .card.fullscreen .lecture-item:nth-child(5) { animation-delay: 0.6s; }
+        .card.fullscreen .lecture-item:nth-child(6) { animation-delay: 0.7s; }
+        .card.fullscreen .lecture-item:nth-child(7) { animation-delay: 0.8s; }
+        .card.fullscreen .lecture-item:nth-child(8) { animation-delay: 0.9s; }
+
+        /* Backdrop effect for fullscreen mode */
+        .fullscreen-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
         }
 
-        /* Add animation delay for each item */
-        .card.fullscreen .lecture-item:nth-child(1) { animation-delay: 0.1s; }
-        .card.fullscreen .lecture-item:nth-child(2) { animation-delay: 0.2s; }
-        .card.fullscreen .lecture-item:nth-child(3) { animation-delay: 0.3s; }
-        .card.fullscreen .lecture-item:nth-child(4) { animation-delay: 0.4s; }
-        .card.fullscreen .lecture-item:nth-child(5) { animation-delay: 0.5s; }
-        .card.fullscreen .lecture-item:nth-child(6) { animation-delay: 0.6s; }
-        .card.fullscreen .lecture-item:nth-child(7) { animation-delay: 0.7s; }
-        .card.fullscreen .lecture-item:nth-child(8) { animation-delay: 0.8s; }
+        .fullscreen-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
     <script src="fullscreen.js"></script>
     <script src="lecture-popup.js"></script>
@@ -707,6 +784,22 @@ $studentName = "Neekunj";
             const profileMenu = document.getElementById('profileMenu');
             profileMenu.classList.toggle('show');
         }
+        
+        // Create backdrop element for fullscreen mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'fullscreen-backdrop';
+            document.body.appendChild(backdrop);
+            
+            // Add click event to backdrop to exit fullscreen
+            backdrop.addEventListener('click', function() {
+                const timetableCard = document.querySelector('.card.fullscreen');
+                if (timetableCard && !document.getElementById('fullscreen-toggle').disabled) {
+                    // Trigger the fullscreen toggle function
+                    document.getElementById('fullscreen-toggle').click();
+                }
+            });
+        });
     </script>
 </body>
 </html>
