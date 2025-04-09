@@ -59,10 +59,19 @@ $studentName = "Neekunj";
             justify-content: space-between;
         }
         
+        /* Updated logo styling */
         .logo {
             font-size: 1.25rem;
             font-weight: bold;
             color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-image {
+            height: 28px;
+            width: auto;
         }
         
         .header-right {
@@ -675,7 +684,10 @@ $studentName = "Neekunj";
     <!-- Header -->
     <header>
         <div class="header-container">
-            <div class="logo">ClassRoster</div>
+            <div class="logo">
+                <img src="./assets/Somaiya logo.png" alt="Logo" class="logo-image">
+                ClassRoster
+            </div>
             
             <div class="header-right">
                 <!-- Search Bar -->
