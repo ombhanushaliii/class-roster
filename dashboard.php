@@ -753,10 +753,6 @@ $studentName = "Neekunj";
                                 
                                 <!-- Add buttons for additional actions -->
                                 <?php if (strpos($lecture['name'], 'L') !== false): ?>
-                                <div class="popup-actions">
-                                    <button class="btn-primary">View Materials</button>
-                                    <button class="btn-secondary">Details</button>
-                                </div>
                                 <?php endif; ?>
                             </div>
                         </div>
