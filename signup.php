@@ -98,7 +98,7 @@ $conn->close();
                 <input type="password" name="password" class="input-field" placeholder="Create New Password" autocomplete="off" required>
             </div>
             <div class="input-box">
-                <input type="password" name="confirm_password" class="input-field" placeholder="Retype New Password" autocomplete="off" required>
+                <input type="password" name="confirm_password" class="input-field" placeholder="Confirm Password" autocomplete="off" required>
             </div>
             <div class="input-submit">
                 <button type="submit" class="submit-btn">Sign Up</button>
