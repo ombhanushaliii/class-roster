@@ -14,7 +14,8 @@ body{
     /* background: #dfdfdf; */
     /* background: radial-gradient(seagreen, cadetblue); */
     /* background:linear-gradient(to bottom, blue,black); */
-    background: radial-gradient(closest-corner at 50% 50%,seagreen, cadetblue);
+    /* background: radial-gradient(closest-corner at 50% 50%,seagreen, cadetblue); */
+    background-color: 	#79a2e3;
 }
 .login-box{
     display: flex;
