@@ -31,628 +31,665 @@ $studentName = "Neekunj";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClassRoster - Student Dashboard</title>
     <style>
-        /*Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        body {
-            min-height: 100vh;
-            background-color: #f9fafb;
-        }
-        
-        /* Header styles */
-        header {
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        /* Updated logo styling */
-        .logo {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #1f2937;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .logo-image {
-            height: 28px;
-            width: auto;
-        }
-        
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-        
-        /* Search bar */
-        .search-container {
-            position: relative;
-        }
-        
-        .search-box {
-            display: flex;
-            align-items: center;
-            background-color: #f3f4f6;
-            border-radius: 8px;
-            padding: 8px 16px;
-        }
-        
-        .search-box input {
-            background-color: transparent;
-            border: none;
-            margin-left: 8px;
-            outline: none;
-        }
-        
-        /* Notification bell */
-        .notification-bell {
-            position: relative;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        
-        .notification-count {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background-color: #ef4444;
-            color: white;
-            font-size: 0.75rem;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Profile dropdown */
-        .profile-container {
-            position: relative;
-        }
-        
-        .profile-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .profile-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        .profile-menu {
-            position: absolute;
-            right: 0;
-            margin-top: 8px;
-            width: 192px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 8px 0;
-            display: none;
-            z-index: 10;
-        }
-        
-        .profile-menu.show {
-            display: block;
-        }
-        
-        .profile-menu a {
-            display: block;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: #1f2937;
-        }
-        
-        .profile-menu a:hover {
-            background-color: #f3f4f6;
-        }
-        
-        /* Main content */
-        main {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 32px 16px;
-        }
-        
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 32px;
-        }
-        
-        @media (min-width: 768px) {
-            .grid-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        
-        /* Card styles */
-        .card {
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 24px;
-        }
-        
-        .photo-card {
-            height: 256px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .college-image {
-            width: 110%;
-            height: 125%;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        
-        .welcome-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .welcome-subtitle {
-            color: #4b5563;
-            margin-top: 8px;
-        }
-        
-        /* Lecture list */
-        .lecture-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .lecture-icon {
-            height: 24px;
-            width: 24px;
-            position: relative;
-            align-items: center;
-        }
+       /*Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
 
-        .lecture-item {
-            display: flex;
-            align-items: center;
-            gap: 12px; 
-            position: relative;
-            padding: 8px;
-            border-radius: 8px;
-            background-color: #f9fafb;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+body {
+    min-height: 100vh;
+    background-color: #f9fafb;
+}
 
-        .icon-sm {
-            width: 16px;
-            height: 16px;
-            color: #6b7280; 
-        }
-        
-        .lecture-item:hover {
-            background-color: #f3f4f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .lecture-name {
-            font-weight: 500;
-        }
-        
-        /* Updated hover details styles */
-        .lecture-details {
-            position: absolute;
-            left: 0;
-            top: 100%;
-            margin-top: 8px;
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            z-index: 10;
-            width: 300px; /* Fixed width instead of 100% */
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            transform: translateY(10px);
-            left: -20px; /* Offset to make it look better */
-            border-left: 4px solid #3b82f6;
-        }
-        
-        .lecture-item:hover .lecture-details {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Style the popup content more attractively */
-        .detail-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1f2937;
-        }
-        
-        .detail-time {
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            color: #4b5563;
-        }
-        
-        .detail-time::before {
-            content: "";
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            margin-right: 8px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-        
-        .detail-faculty {
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            color: #4b5563;
-        }
-        
-        .detail-faculty::before {
-            content: "";
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            margin-right: 8px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-        
-        /* Add a decorative element at the top */
-        .lecture-details::before {
-            content: "";
-            position: absolute;
-            top: -8px;
-            left: 30px;
-            width: 16px;
-            height: 16px;
-            background-color: white;
-            transform: rotate(45deg);
-            box-shadow: -3px -3px 5px rgba(0, 0, 0, 0.04);
-        }
-        
-        /* For click functionality with the JavaScript file */
-        .lecture-details.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Report card section */
-        .report-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 160px;
-        }
-        
-        .report-button {
-            background-color: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: none;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .report-button:hover {
-            background-color: #2563eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transform: translateY(-4px);
-        }
-        
-        /* Icons */
-        .icon {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            stroke-width: 0;
-            stroke: currentColor;
-            fill: currentColor;
-            vertical-align: middle;
-        }
-        
-        .icon-sm {
-            width: 16px;
-            height: 16px;
-        }
-        
-        /* Fullscreen toggle styles */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
+/* Header styles */
+header {
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 200; /* Ensure header stays on top */
+}
 
-        /* ENHANCED ANIMATION STYLES */
-        /* Animation keyframes */
-        @keyframes fullscreen-expand {
-            0% { 
-                transform: scale(1);
-                border-radius: 16px;
-            }
-            20% { 
-                transform: scale(1.03);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            }
-            100% { 
-                transform: scale(1);
-                border-radius: 0;
-                box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-            }
-        }
+.header-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        @keyframes fullscreen-collapse {
-            0% { 
-                transform: scale(1);
-                border-radius: 0;
-            }
-            30% { 
-                transform: scale(0.95);
-            }
-            60% { 
-                transform: scale(1.02);
-                border-radius: 8px;
-            }
-            100% { 
-                transform: scale(1);
-                border-radius: 16px;
-            }
-        }
+/* Updated logo styling */
+.logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        @keyframes slide-in {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.logo-image {
+    height: 28px;
+    width: auto;
+}
 
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
 
-        @keyframes zoom-in {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
+/* Search bar */
+.search-container {
+    position: relative;
+}
 
-        /* Card transition states */
-        .card {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
 
-        .card.fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            width: 100%;
-            height: 100%;
-            max-width: none;
-            margin: 0;
-            border-radius: 0;
-            overflow-y: auto;
-            animation: fullscreen-expand 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+.search-box input {
+    background-color: transparent;
+    border: none;
+    margin-left: 8px;
+    outline: none;
+}
 
-        .card.fullscreen.collapsing {
-            animation: fullscreen-collapse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+/* Notification bell */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
 
-        .card.fullscreen .lecture-list {
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            padding: 10px;
-        }
+.notification-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        /* Enhanced fullscreen button styles */
-        .fullscreen-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+/* Profile dropdown */
+.profile-container {
+    position: relative;
+}
 
-        .fullscreen-button:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(59, 130, 246, 0);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            z-index: -1;
-        }
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
 
-        .fullscreen-button:hover:before {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
+.profile-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
-        .fullscreen-button:active {
-            transform: scale(0.95);
-        }
+.profile-menu {
+    position: absolute;
+    right: 0;
+    margin-top: 8px;
+    width: 192px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 8px 0;
+    display: none;
+    z-index: 300; /* Ensure dropdown stays on top */
+}
 
-        .fullscreen-icon {
-            transition: all 0.4s ease;
-        }
+.profile-menu.show {
+    display: block;
+}
 
-        .fullscreen-button:hover .fullscreen-icon {
-            transform: scale(1.2);
-        }
+.profile-menu a {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #1f2937;
+}
 
-        /* Enhanced lecture item styles in fullscreen mode */
-        .card.fullscreen .lecture-item {
-            padding: 16px;
-            margin-bottom: 16px;
-            border-radius: 12px;
-            border-left: 4px solid #3b82f6;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
+.profile-menu a:hover {
+    background-color: #f3f4f6;
+}
 
-        .card.fullscreen .lecture-item:hover {
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
+/* Main content */
+main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 16px;
+    position: relative;
+    z-index: 1;
+}
 
-        .lecture-item.fullscreen-item {
-            display: block;
-            background-color: #f9fafb;
-            padding: 16px;
-            border-radius: 12px;
-            animation: zoom-in 0.5s forwards;
-        }
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
 
-        .lecture-item.fullscreen-item .lecture-details {
-            position: static !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            margin-top: 12px;
-            padding: 16px;
-            width: 100%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-left: none;
-            background-color: white;
-            border-radius: 8px;
-            transform: none;
-            transition: none;
-            animation: fade-in 0.4s forwards;
-            animation-delay: 0.2s;
-            opacity: 0;
-        }
+@media (min-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 
-        .lecture-item.fullscreen-item .lecture-details::before {
-            display: none;
-        }
+/* Card styles */
+.card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+}
 
-        /* Arrange lecture header and content in fullscreen mode */
-        .lecture-item.fullscreen-item {
-            display: flex;
-            flex-direction: column;
-        }
+.photo-card {
+    height: 256px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
 
-        .lecture-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.college-image {
+    width: 110%;
+    height: 125%;
+    object-fit: cover;
+    border-radius: 16px;
+}
 
-        .lecture-item.fullscreen-item .lecture-header {
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
 
-        /* Animation for expanding lectures in fullscreen */
-        .card.fullscreen .lecture-item {
-            animation: slide-in 0.5s ease forwards;
-            opacity: 0;
-        }
+.welcome-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
 
-        /* Add animation delay for each item with increased timing */
-        .card.fullscreen .lecture-item:nth-child(1) { animation-delay: 0.2s; }
-        .card.fullscreen .lecture-item:nth-child(2) { animation-delay: 0.3s; }
-        .card.fullscreen .lecture-item:nth-child(3) { animation-delay: 0.4s; }
-        .card.fullscreen .lecture-item:nth-child(4) { animation-delay: 0.5s; }
-        .card.fullscreen .lecture-item:nth-child(5) { animation-delay: 0.6s; }
-        .card.fullscreen .lecture-item:nth-child(6) { animation-delay: 0.7s; }
-        .card.fullscreen .lecture-item:nth-child(7) { animation-delay: 0.8s; }
-        .card.fullscreen .lecture-item:nth-child(8) { animation-delay: 0.9s; }
+.welcome-subtitle {
+    color: #4b5563;
+    margin-top: 8px;
+}
 
-        /* Backdrop effect for fullscreen mode */
-        .fullscreen-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.3);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-        }
+/* Lecture list */
+.lecture-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    z-index: 2; /* Ensure lecture list has stacking context */
+}
 
-        .fullscreen-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+.lecture-icon {
+    height: 24px;
+    width: 24px;
+    position: relative;
+    align-items: center;
+}
+
+.lecture-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+    position: relative;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    cursor: pointer;
+    transition: all 0.3s ease, z-index 0s;
+    z-index: 1; /* Base z-index */
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+    color: #6b7280; 
+}
+
+.lecture-item:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    z-index: 50; /* Higher z-index on hover */
+}
+
+.lecture-name {
+    font-weight: 500;
+}
+
+/* Completely revamped lecture details popup styles */
+.lecture-details {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: 8px;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important; /* Stronger shadow */
+    padding: 20px;
+    z-index: 101; /* Higher z-index to appear above other elements */
+    width: 300px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(10px);
+    left: -20px;
+    border-left: 4px solid #3b82f6;
+    pointer-events: none; /* Default state: not clickable */
+}
+
+/* Make popups appear on hover */
+.lecture-item:hover .lecture-details {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto; /* Hover state: clickable */
+}
+
+/* This ensures the active state maintains visibility regardless of hover */
+.lecture-details.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    z-index: 200 !important;
+    pointer-events: auto !important;
+}
+
+/* Style the popup content */
+.detail-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #1f2937;
+}
+
+.detail-time {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: #4b5563;
+}
+
+.detail-time::before {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.detail-faculty {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    color: #4b5563;
+}
+
+.detail-faculty::before {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Add a decorative element at the top */
+.lecture-details::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 30px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    transform: rotate(45deg);
+    box-shadow: -3px -3px 5px rgba(0, 0, 0, 0.04);
+    z-index: -1; /* Place arrow behind the popup body */
+}
+
+/* Report card section */
+.report-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 160px;
+}
+
+.report-button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.report-button:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+/* Icons */
+.icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    stroke-width: 0;
+    stroke: currentColor;
+    fill: currentColor;
+    vertical-align: middle;
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+/* Fullscreen toggle styles */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Ensure timetable card maintains proper stacking context */
+#timetable-card {
+    position: relative;
+    z-index: 10; /* Higher than other cards */
+}
+
+/* When in fullscreen mode, the timetable card should be above everything */
+#timetable-card.fullscreen {
+    z-index: 1000;
+}
+
+/* ENHANCED ANIMATION STYLES */
+/* Animation keyframes */
+@keyframes fullscreen-expand {
+    0% { 
+        transform: scale(1);
+        border-radius: 16px;
+    }
+    20% { 
+        transform: scale(1.03);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    100% { 
+        transform: scale(1);
+        border-radius: 0;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    }
+}
+
+@keyframes fullscreen-collapse {
+    0% { 
+        transform: scale(1);
+        border-radius: 0;
+    }
+    30% { 
+        transform: scale(0.95);
+    }
+    60% { 
+        transform: scale(1.02);
+        border-radius: 8px;
+    }
+    100% { 
+        transform: scale(1);
+        border-radius: 16px;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes zoom-in {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Card transition states */
+.card {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    margin: 0;
+    border-radius: 0;
+    overflow-y: auto;
+    animation: fullscreen-expand 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card.fullscreen.collapsing {
+    animation: fullscreen-collapse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card.fullscreen .lecture-list {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* Enhanced fullscreen button styles */
+.fullscreen-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 5;
+}
+
+.fullscreen-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(59, 130, 246, 0);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.fullscreen-button:hover:before {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.fullscreen-button:active {
+    transform: scale(0.95);
+}
+
+.fullscreen-icon {
+    transition: all 0.4s ease;
+}
+
+.fullscreen-button:hover .fullscreen-icon {
+    transform: scale(1.2);
+}
+
+/* Enhanced lecture item styles in fullscreen mode */
+.card.fullscreen .lecture-item {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    border-left: 4px solid #3b82f6;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    z-index: 1050; /* Higher z-index in fullscreen mode */
+}
+
+.card.fullscreen .lecture-item:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Special handling for lecture items in fullscreen mode */
+.lecture-item.fullscreen-item {
+    display: block;
+    background-color: #f9fafb;
+    padding: 16px;
+    border-radius: 12px;
+    animation: zoom-in 0.5s forwards;
+}
+
+/* Completely revamped lecture details in fullscreen mode */
+.card.fullscreen .lecture-details {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    margin-top: 12px;
+    padding: 16px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    border-left: none;
+    background-color: white;
+    border-radius: 8px;
+    transform: none !important;
+    transition: none;
+    animation: fade-in 0.4s forwards;
+    animation-delay: 0.2s;
+    opacity: 0;
+    z-index: 1051; /* Higher z-index in fullscreen mode */
+    pointer-events: auto;
+}
+
+.card.fullscreen .lecture-item:hover .lecture-details {
+    transform: none;
+}
+
+.card.fullscreen .lecture-details::before {
+    display: none; /* Hide arrow in fullscreen mode */
+}
+
+/* Arrange lecture header and content in fullscreen mode */
+.lecture-item.fullscreen-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.lecture-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lecture-item.fullscreen-item .lecture-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Animation for expanding lectures in fullscreen */
+.card.fullscreen .lecture-item {
+    animation: slide-in 0.5s ease forwards;
+    opacity: 0;
+}
+
+/* Add animation delay for each item with increased timing */
+.card.fullscreen .lecture-item:nth-child(1) { animation-delay: 0.2s; }
+.card.fullscreen .lecture-item:nth-child(2) { animation-delay: 0.3s; }
+.card.fullscreen .lecture-item:nth-child(3) { animation-delay: 0.4s; }
+.card.fullscreen .lecture-item:nth-child(4) { animation-delay: 0.5s; }
+.card.fullscreen .lecture-item:nth-child(5) { animation-delay: 0.6s; }
+.card.fullscreen .lecture-item:nth-child(6) { animation-delay: 0.7s; }
+.card.fullscreen .lecture-item:nth-child(7) { animation-delay: 0.8s; }
+.card.fullscreen .lecture-item:nth-child(8) { animation-delay: 0.9s; }
+
+/* Backdrop effect for fullscreen mode */
+.fullscreen-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.fullscreen-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
     </style>
-    <script src="fullscreen.js"></script>
-    <script src="lecture-popup.js"></script>
 </head>
 <body>
     <!-- SVG Icons -->
@@ -809,5 +846,9 @@ $studentName = "Neekunj";
             });
         });
     </script>
+    
+    <!-- Include the JS files -->
+    <script src="lecture-popup.js"></script>
+    <script src="fullscreen.js"></script>
 </body>
 </html>
