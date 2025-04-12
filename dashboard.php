@@ -681,12 +681,14 @@ main {
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 999;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    visibility: hidden; /* Added visibility property */
+    transition: opacity 0.5s ease, visibility 0.5s ease; /* Added visibility to transition */
     pointer-events: none;
 }
 
 .fullscreen-backdrop.active {
     opacity: 1;
+    visibility: visible; /* Show backdrop when active */
     pointer-events: auto;
 }
     </style>
@@ -759,6 +761,9 @@ main {
         </div>
     </header>
 
+    <!-- Fullscreen backdrop div -->
+    <div class="fullscreen-backdrop" id="fullscreen-backdrop"></div>
+
     <main>
         <div class="grid-container">
             <!-- Profile Photo -->
@@ -824,30 +829,15 @@ main {
         </div>
     </main>
 
+    <!-- Include the JS files -->
     <script>
         function toggleProfileMenu() {
             const profileMenu = document.getElementById('profileMenu');
             profileMenu.classList.toggle('show');
         }
-        
-        // Create backdrop element for fullscreen mode
-        document.addEventListener('DOMContentLoaded', function() {
-            const backdrop = document.createElement('div');
-            backdrop.className = 'fullscreen-backdrop';
-            document.body.appendChild(backdrop);
-            
-            // Add click event to backdrop to exit fullscreen
-            backdrop.addEventListener('click', function() {
-                const timetableCard = document.querySelector('.card.fullscreen');
-                if (timetableCard && !document.getElementById('fullscreen-toggle').disabled) {
-                    // Trigger the fullscreen toggle function
-                    document.getElementById('fullscreen-toggle').click();
-                }
-            });
-        });
     </script>
     
-    <!-- Include the JS files -->
+    <!-- Include the updated JS files -->
     <script src="lecture-popup.js"></script>
     <script src="fullscreen.js"></script>
 </body>
