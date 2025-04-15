@@ -585,7 +585,7 @@ main {
 
 /* Enhanced lecture item styles in fullscreen mode */
 .card.fullscreen .lecture-item {
-    padding: 16px;
+    padding: 15px;
     margin-bottom: 16px;
     border-radius: 12px;
     border-left: 4px solid #3b82f6;
