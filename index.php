@@ -7,6 +7,13 @@
 
     <title>Class Roster</title>
     <style>
+        :root {
+            --radial-gradient-background: 250, 250, 250;
+            --solid-color-background: 15, 15, 15;
+            --overlay-color: 255, 255, 255;
+            --x: 100%;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -114,60 +121,86 @@
             opacity: 0.9;
         }
 
-        .cta-button {
-            appearance: button;
-            background-color: #000;
-            background-image: none;
-            border: 1px solid #000;
-            border-radius: 4px;
-            box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
-            box-sizing: border-box;
-            color: #fff;
-            cursor: pointer;
-            display: inline-block;
-            font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 20px;
-            margin: 0 5px 10px 0;
-            overflow: visible;
+        /* New Shiny Button Styles */
+        .shiny-button {
+            position: relative;
             padding: 12px 40px;
-            text-align: center;
-            text-transform: none;
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
-            vertical-align: middle;
-            white-space: nowrap;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            overflow: hidden;
+            transform: scale(1);
             text-decoration: none;
+            display: inline-block;
         }
-
-        .cta-button:focus {
-            text-decoration: none;
+        
+        .radial-gradient {
+            background: radial-gradient(
+                circle at 50% 0%,
+                rgba(var(--radial-gradient-background), 0.05) 0%,
+                transparent 60%
+            ) rgba(var(--solid-color-background), 1);
         }
-
-        .cta-button:hover {
-            text-decoration: none;
+        
+        .button-text {
+            position: relative;
+            display: block;
+            color: rgb(245, 245, 245);
+            letter-spacing: 1px;
+            font-weight: 300;
+            z-index: 2;
         }
-
-        .cta-button:active {
-            box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
-            outline: 0;
+        
+        .linear-mask {
+            mask-image: linear-gradient(
+                -75deg,
+                white calc(var(--x) + 20%),
+                transparent calc(var(--x) + 30%),
+                white calc(var(--x) + 100%)
+            );
+            -webkit-mask-image: linear-gradient(
+                -75deg,
+                white calc(var(--x) + 20%),
+                transparent calc(var(--x) + 30%),
+                white calc(var(--x) + 100%)
+            );
         }
-
-        .cta-button:not([disabled]):active {
-            box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
-            transform: translate(2px, 2px);
+        
+        .linear-overlay {
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: 6px;
+            background-image: linear-gradient(
+                -75deg,
+                rgba(var(--overlay-color), 0.1) calc(var(--x) + 20%),
+                rgba(var(--overlay-color), 0.5) calc(var(--x) + 25%),
+                rgba(var(--overlay-color), 0.1) calc(var(--x) + 100%)
+            );
+            mask:
+                linear-gradient(black, black) content-box,
+                linear-gradient(black, black);
+            -webkit-mask:
+                linear-gradient(black, black) content-box,
+                linear-gradient(black, black);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+        }
+        
+        .shiny-button:active {
+            transform: scale(0.97);
+            transition: transform 0.2s cubic-bezier(0.4, 2, 0.7, 0.8);
         }
 
         @media (min-width: 768px) {
-            .cta-button {
+            .shiny-button {
                 padding: 12px 50px;
             }
         }
 
         .arrow-icon {
             font-size: 1.2rem;
+            margin-left: 8px;
         }
     </style>
 </head>
@@ -181,11 +214,58 @@
 
     <main class="hero">
         <h1>Class Roster</h1>
-        <p class="subtitle"> Organize your student records, track attendance, and manage grades in one secure place.</p>
-        <a href="signup.php" class="cta-button">
-            Get Started
-            <span class="arrow-icon">→</span>
+        <p class="subtitle">Organize your student records, track attendance, and manage grades in one secure place.</p>
+        <a id="shiny-button" href="signup.php" class="shiny-button radial-gradient">
+            <span class="button-text linear-mask">Get Started <span class="arrow-icon">→</span></span>
+            <span id="overlay" class="linear-overlay"></span>
         </a>
     </main>
+
+    <script>
+        const button = document.getElementById('shiny-button');
+        const root = document.documentElement;
+        
+        // Function to animate the shine effect
+        function animateShine() {
+            // Set initial position
+            root.style.setProperty('--x', '100%');
+            
+            // Animate from 100% to -100%
+            const duration = 1500;
+            const startTime = performance.now();
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Calculate current position (100% to -100%)
+                const position = 100 - progress * 200;
+                root.style.setProperty('--x', `${position}%`);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Delay before next animation
+                    setTimeout(animateShine, 1000);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Start the animation
+        setTimeout(animateShine, 500);
+        
+        // Add spring-like animation for tap
+        button.addEventListener('mousedown', () => {
+            button.style.transform = 'scale(0.97)';
+            button.style.transition = 'transform 0.15s cubic-bezier(0.2, 2, 0.4, 1)';
+        });
+        
+        button.addEventListener('mouseup', () => {
+            button.style.transform = 'scale(1)';
+            button.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.4, 1)';
+        });
+    </script>
 </body>
 </html>

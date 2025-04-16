@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shiny Button</title>
+  <style>
+    :root {
+      --radial-gradient-background: 250, 250, 250;
+      --solid-color-background: 15, 15, 15;
+      --overlay-color: 255, 255, 255;
+      --x: 100%;
+    }
+    
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: rgb(10, 10, 10);
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    .shiny-button {
+      position: relative;
+      padding: 8px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      overflow: hidden;
+      transform: scale(1);
+    }
+    
+    .radial-gradient {
+      background: radial-gradient(
+        circle at 50% 0%,
+        rgba(var(--radial-gradient-background), 0.05) 0%,
+        transparent 60%
+      ) rgba(var(--solid-color-background), 1);
+    }
+    
+    .button-text {
+      position: relative;
+      display: block;
+      color: rgb(245, 245, 245);
+      letter-spacing: 1px;
+      font-weight: 300;
+      z-index: 2;
+    }
+    
+    .linear-mask {
+      mask-image: linear-gradient(
+        -75deg,
+        white calc(var(--x) + 20%),
+        transparent calc(var(--x) + 30%),
+        white calc(var(--x) + 100%)
+      );
+      -webkit-mask-image: linear-gradient(
+        -75deg,
+        white calc(var(--x) + 20%),
+        transparent calc(var(--x) + 30%),
+        white calc(var(--x) + 100%)
+      );
+    }
+    
+    .linear-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      border-radius: 6px;
+      background-image: linear-gradient(
+        -75deg,
+        rgba(var(--overlay-color), 0.1) calc(var(--x) + 20%),
+        rgba(var(--overlay-color), 0.5) calc(var(--x) + 25%),
+        rgba(var(--overlay-color), 0.1) calc(var(--x) + 100%)
+      );
+      mask:
+        linear-gradient(black, black) content-box,
+        linear-gradient(black, black);
+      -webkit-mask:
+        linear-gradient(black, black) content-box,
+        linear-gradient(black, black);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+    }
+    
+    .shiny-button:active {
+      transform: scale(0.97);
+      transition: transform 0.2s cubic-bezier(0.4, 2, 0.7, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <button id="shiny-button" class="shiny-button radial-gradient">
+    <span class="button-text linear-mask">Start now</span>
+    <span id="overlay" class="linear-overlay"></span>
+  </button>
+
+  <script>
+    const button = document.getElementById('shiny-button');
+    const root = document.documentElement;
+    
+    // Function to animate the shine effect
+    function animateShine() {
+      // Set initial position
+      root.style.setProperty('--x', '100%');
+      
+      // Animate from 100% to -100%
+      const duration = 1500;
+      const startTime = performance.now();
+      
+      function animate(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Calculate current position (100% to -100%)
+        const position = 100 - progress * 200;
+        root.style.setProperty('--x', `${position}%`);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          // Delay before next animation
+          setTimeout(animateShine, 1000);
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    // Start the animation
+    setTimeout(animateShine, 500);
+    
+    // Add spring-like animation for tap
+    button.addEventListener('mousedown', () => {
+      button.style.transform = 'scale(0.97)';
+      button.style.transition = 'transform 0.15s cubic-bezier(0.2, 2, 0.4, 1)';
+    });
+    
+    button.addEventListener('mouseup', () => {
+      button.style.transform = 'scale(1)';
+      button.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.4, 1)';
+    });
+  </script>
+</body>
+</html>
