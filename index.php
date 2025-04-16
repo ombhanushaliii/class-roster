@@ -38,18 +38,51 @@
             align-items: center;
         }
 
-        .download-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+        /* Removed .download-btn styles */
+
+        .button-30 {
+            align-items: center;
+            appearance: none;
+            background-color: #FCFCFD;
+            border-radius: 4px;
+            border-width: 0;
+            box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+            box-sizing: border-box;
+            color: #36395A;
+            cursor: pointer;
+            display: inline-flex;
+            font-family: "JetBrains Mono",monospace;
+            height: 36px; /* Adjusted from 48px to fit nav better */
+            justify-content: center;
+            line-height: 1;
+            list-style: none;
+            overflow: hidden;
+            padding-left: 16px;
+            padding-right: 16px;
+            position: relative;
+            text-align: left;
             text-decoration: none;
-            transition: background-color 0.3s;
-            font-size: 12px;
+            transition: box-shadow .15s,transform .15s;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            white-space: nowrap;
+            will-change: box-shadow,transform;
+            font-size: 14px; /* Reduced from 18px to better fit navbar */
         }
 
-        .download-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .button-30:focus {
+            box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+        }
+
+        .button-30:hover {
+            box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+            transform: translateY(-2px);
+        }
+
+        .button-30:active {
+            box-shadow: #D6D6E7 0 3px 7px inset;
+            transform: translateY(2px);
         }
 
         .hero {
@@ -142,7 +175,7 @@
     <nav>
         <div class="logo">Class Roster</div>
         <div class="nav-right">
-            <a href="signup.php" class="download-btn">Login</a>
+            <a href="signup.php" class="button-30" role="button">Login</a>
         </div>
     </nav>
 
@@ -156,5 +189,3 @@
     </main>
 </body>
 </html>
-
-
