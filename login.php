@@ -86,6 +86,9 @@ $conn->close();
                         <?php if (!empty($error_message)): ?>
                             <div class="error-message"><?php echo $error_message; ?></div>
                         <?php endif; ?>
+                        <div class="signup-link">
+                            <p>Don't have an account? <a href="signup.php">Signup</a></p>
+                        </div>
                     </div>
                 </form>
             </td>
