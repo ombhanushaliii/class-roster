@@ -70,48 +70,34 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="signup.css">
     <title>Sign Up</title>
-    <style>
-        .success-message {
-            color: green;
-            font-size: 16px;
-            text-align: center;
-            margin-top: 10px;
-        }
-        .error-message {
-            color: red;
-            font-size: 16px;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div class="signup-box">
-        <div class="signup-header">
-            <header>Sign Up</header>
-        </div>
-        <form action="signup.php" method="POST">
-            <div class="input-box">
-                <input type="text" name="SVVNetID" class="input-field" placeholder="SVVNetID" autocomplete="off" required>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Sign Up</h2>
             </div>
-            <div class="input-box">
-                <input type="password" name="password" class="input-field" placeholder="Create New Password" autocomplete="off" required>
-            </div>
-            <div class="input-box">
-                <input type="password" name="confirm_password" class="input-field" placeholder="Confirm Password" autocomplete="off" required>
-            </div>
-            <div class="input-submit">
-                <button type="submit" class="submit-btn">Sign Up</button>
-            </div>
-        </form>
-    
-        <div class="login-link">
-            <p>Already have an account? <a href="login.php">Login</a></p>
-        </div>
-
-        <!-- Success/Error Message Display Here -->
-        <div class="message-box">
-            <?php echo $message; ?>
+            <form action="signup.php" method="POST">
+                <div class="input-group">
+                    <input type="text" name="SVVNetID" required>
+                    <label>SVVNetID</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" required>
+                    <label>Create Password</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" required>
+                    <label>Confirm Password</label>
+                </div>
+                <div class="message-box">
+                    <?php echo $message; ?>
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+                <div class="login-link">
+                    Already have an account? <a href="login.php">Login</a>
+                </div>
+            </form>
         </div>
     </div>
 </body>
