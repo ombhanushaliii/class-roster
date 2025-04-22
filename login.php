@@ -4,7 +4,7 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "class_roster";
-$conn = new mysqli($servername, $username, $password, $dbname, 3306);
+$conn = new mysqli($servername, $username, $password, $dbname, 3307);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -32,9 +32,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
             $check_details->store_result();
             
             if ($check_details->num_rows > 0) {
-                // User has completed profile, go to dashboard
+                // Get the user type from user_details
+                $get_type = $conn->prepare("SELECT user_type FROM user_details WHERE SVVNetID = ?");
+                $get_type->bind_param("s", $SVVNetID);
+                $get_type->execute();
+                $type_result = $get_type->get_result();
+                $type_data = $type_result->fetch_assoc();
+                
+                // Set the user type in session
+                $_SESSION['user_type'] = $type_data['user_type'];
+                
+                // User has completed profile, redirect based on user type
                 echo "<p class='success-message'>Login successful! Redirecting...</p>";
-                header("refresh:1; url=dashboard.php");
+                
+                if ($_SESSION['user_type'] === 'teacher') {
+                    header("refresh:1; url=teacher.php");
+                } else {
+                    header("refresh:1; url=dashboard.php");
+                }
             } else {
                 // First login, go to details page
                 echo "<p class='success-message'>Login successful! Please complete your profile.</p>";
