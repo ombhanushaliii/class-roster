@@ -7,12 +7,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "class_roster";
+require_once 'config.php'; // Include the config file
 
-$conn = new mysqli($servername, $username, $password, $dbname, 3307);
+$servername = $DB_HOST;
+$username = $DB_USER;
+$password = $DB_PASS;
+$dbname = $DB_NAME;
+
+$conn = new mysqli($servername, $username, $password, $dbname, $DB_PORT);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -330,16 +332,16 @@ $conn->close();
                 
                 <div id="student-section" class="form-section active">
                     <div class="input-group">
-                        <input type="text" name="roll_number" required>
-                        <label>Roll Number</label>
+                        <input type="text" name="roll_number" id="roll_number" required>
+                        <label for="roll_number">Roll Number</label>
                     </div>
                     <div class="input-group">
-                        <input type="text" name="class" required>
-                        <label>Class</label>
+                        <input type="text" name="class" id="class" required>
+                        <label for="class">Class</label>
                     </div>
                     <div class="input-group">
-                        <input type="text" name="section" required>
-                        <label>Section</label>
+                        <input type="text" name="section" id="section" required>
+                        <label for="section">Section</label>
                     </div>
                 </div>
                 
@@ -371,35 +373,48 @@ $conn->close();
         const studentSection = document.getElementById('student-section');
         const teacherSection = document.getElementById('teacher-section');
         
+        // Function to toggle required attributes
+        function toggleRequired(section, isRequired) {
+            const inputs = section.querySelectorAll('input[type="text"], input[type="email"]');
+            inputs.forEach(input => {
+                input.required = isRequired;
+                // Make sure we don't break the floating labels
+                if (input.value) {
+                    input.classList.add('has-value');
+                }
+            });
+        }
+        
         studentRadio.addEventListener('change', function() {
             if (this.checked) {
                 studentSection.classList.add('active');
                 teacherSection.classList.remove('active');
                 
-                // Make student fields required
-                const studentInputs = studentSection.querySelectorAll('input');
-                studentInputs.forEach(input => input.required = true);
-                
-                // Make teacher fields not required
-                const teacherInputs = teacherSection.querySelectorAll('input');
-                teacherInputs.forEach(input => input.required = false);
+                // Toggle required attributes
+                toggleRequired(studentSection, true);
+                toggleRequired(teacherSection, false);
             }
         });
         
         teacherRadio.addEventListener('change', function() {
             if (this.checked) {
-                studentSection.classList.remove('active');
                 teacherSection.classList.add('active');
+                studentSection.classList.remove('active');
                 
-                // Make teacher fields required
-                const teacherInputs = teacherSection.querySelectorAll('input');
-                teacherInputs.forEach(input => input.required = true);
-                
-                // Make student fields not required
-                const studentInputs = studentSection.querySelectorAll('input');
-                studentInputs.forEach(input => input.required = false);
+                // Toggle required attributes
+                toggleRequired(teacherSection, true);
+                toggleRequired(studentSection, false);
             }
         });
+        
+        // Make sure the correct fields are required initially
+        if (studentRadio.checked) {
+            toggleRequired(studentSection, true);
+            toggleRequired(teacherSection, false);
+        } else {
+            toggleRequired(teacherSection, true);
+            toggleRequired(studentSection, false);
+        }
         
         // Handle floating labels for inputs
         const inputs = document.querySelectorAll('.input-group input');

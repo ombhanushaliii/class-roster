@@ -8,12 +8,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 // Check if user is a teacher
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "class_roster";
+require_once 'config.php'; // Include the config file
 
-$conn = new mysqli($servername, $username, $password, $dbname, 3307);
+$servername = $DB_HOST;
+$username = $DB_USER;
+$password = $DB_PASS;
+$dbname = $DB_NAME;
+
+$conn = new mysqli($servername, $username, $password, $dbname, $DB_PORT);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

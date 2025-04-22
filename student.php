@@ -8,12 +8,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "class_roster";
+require_once 'config.php'; // Include the config file
 
-$conn = new mysqli($servername, $username, $password, $dbname, 3306);
+$servername = $DB_HOST;
+$username = $DB_USER;
+$password = $DB_PASS;
+$dbname = $DB_NAME;
+
+$conn = new mysqli($servername, $username, $password, $dbname, $DB_PORT);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -72,29 +74,41 @@ if ($attendance_data['total_classes'] > 0) {
 
 // Get classmates in the same class and section
 $classmates_stmt = $conn->prepare("SELECT * FROM user_details WHERE user_type = 'student' AND class = ? AND section = ? AND SVVNetID != ? ORDER BY full_name ASC LIMIT 5");
-$classmates_stmt->bind_param("sss", $class, $section, $SVVNetID);
-$classmates_stmt->execute();
-$classmates_result = $classmates_stmt->get_result();
-$classmates = [];
 
-while ($classmate = $classmates_result->fetch_assoc()) {
-    $classmates[] = $classmate;
+if ($classmates_stmt === false) {
+    // Handle error - table might not exist
+    $classmates = [];
+} else {
+    $classmates_stmt->bind_param("sss", $class, $section, $SVVNetID);
+    $classmates_stmt->execute();
+    $classmates_result = $classmates_stmt->get_result();
+    $classmates = [];
+
+    while ($classmate = $classmates_result->fetch_assoc()) {
+        $classmates[] = $classmate;
+    }
+    $classmates_stmt->close();
 }
-$classmates_stmt->close();
 
-// Get teachers for the student's class
+// Get teachers for the student's class - Add similar error handling
 $teachers_stmt = $conn->prepare("SELECT t.* FROM teacher_classes tc JOIN user_details t ON tc.teacher_id = t.SVVNetID WHERE tc.class = ? AND tc.section = ? AND t.user_type = 'teacher' ORDER BY t.full_name ASC");
-$teachers_stmt->bind_param("ss", $class, $section);
-$teachers_stmt->execute();
-$teachers_result = $teachers_stmt->get_result();
-$teachers = [];
 
-while ($teacher = $teachers_result->fetch_assoc()) {
-    $teachers[] = $teacher;
+if ($teachers_stmt === false) {
+    // Handle error - table might not exist
+    $teachers = [];
+} else {
+    $teachers_stmt->bind_param("ss", $class, $section);
+    $teachers_stmt->execute();
+    $teachers_result = $teachers_stmt->get_result();
+    $teachers = [];
+
+    while ($teacher = $teachers_result->fetch_assoc()) {
+        $teachers[] = $teacher;
+    }
+    $teachers_stmt->close();
 }
-$teachers_stmt->close();
 
-// Get student's assignments
+// Get student's assignments - Add error handling
 $assignments_stmt = $conn->prepare("SELECT a.*, 
     CASE WHEN sa.submission_date IS NOT NULL THEN 'completed' ELSE 'pending' END as status
     FROM assignments a
@@ -102,39 +116,57 @@ $assignments_stmt = $conn->prepare("SELECT a.*,
     WHERE a.class = ? AND a.section = ? AND a.due_date >= CURDATE()
     ORDER BY a.due_date ASC
     LIMIT 3");
-$assignments_stmt->bind_param("sss", $SVVNetID, $class, $section);
-$assignments_stmt->execute();
-$assignments_result = $assignments_stmt->get_result();
-$assignments = [];
 
-while ($assignment = $assignments_result->fetch_assoc()) {
-    $assignments[] = $assignment;
+if ($assignments_stmt === false) {
+    // Handle error - table might not exist
+    $assignments = [];
+} else {
+    $assignments_stmt->bind_param("sss", $SVVNetID, $class, $section);
+    $assignments_stmt->execute();
+    $assignments_result = $assignments_stmt->get_result();
+    $assignments = [];
+
+    while ($assignment = $assignments_result->fetch_assoc()) {
+        $assignments[] = $assignment;
+    }
+    $assignments_stmt->close();
 }
-$assignments_stmt->close();
 
-// Get student's grades
+// Get student's grades - Add error handling
 $grades_stmt = $conn->prepare("SELECT subject_name, AVG(marks) as average_marks FROM student_grades WHERE student_id = ? GROUP BY subject_name ORDER BY subject_name");
-$grades_stmt->bind_param("s", $SVVNetID);
-$grades_stmt->execute();
-$grades_result = $grades_stmt->get_result();
-$grades = [];
 
-while ($grade = $grades_result->fetch_assoc()) {
-    $grades[] = $grade;
+if ($grades_stmt === false) {
+    // Handle error - table might not exist
+    $grades = [];
+} else {
+    $grades_stmt->bind_param("s", $SVVNetID);
+    $grades_stmt->execute();
+    $grades_result = $grades_stmt->get_result();
+    $grades = [];
+
+    while ($grade = $grades_result->fetch_assoc()) {
+        $grades[] = $grade;
+    }
+    $grades_stmt->close();
 }
-$grades_stmt->close();
 
-// Get any announcements or notifications
+// Get any announcements or notifications - Add error handling
 $announcements_stmt = $conn->prepare("SELECT * FROM announcements WHERE (class = ? AND section = ?) OR (class = 'all' AND section = 'all') ORDER BY created_at DESC LIMIT 3");
-$announcements_stmt->bind_param("ss", $class, $section);
-$announcements_stmt->execute();
-$announcements_result = $announcements_stmt->get_result();
-$announcements = [];
 
-while ($announcement = $announcements_result->fetch_assoc()) {
-    $announcements[] = $announcement;
+if ($announcements_stmt === false) {
+    // Handle error - table might not exist
+    $announcements = [];
+} else {
+    $announcements_stmt->bind_param("ss", $class, $section);
+    $announcements_stmt->execute();
+    $announcements_result = $announcements_stmt->get_result();
+    $announcements = [];
+
+    while ($announcement = $announcements_result->fetch_assoc()) {
+        $announcements[] = $announcement;
+    }
+    $announcements_stmt->close();
 }
-$announcements_stmt->close();
 
 // Get today's date
 $today = date("Y-m-d");

@@ -1,10 +1,13 @@
 <?php
 session_start();
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "class_roster";
-$conn = new mysqli($servername, $username, $password, $dbname, 3307);
+require_once 'config.php'; // Include the config file
+
+$servername = $DB_HOST;
+$username = $DB_USER;
+$password = $DB_PASS;
+$dbname = $DB_NAME;
+
+$conn = new mysqli($servername, $username, $password, $dbname, $DB_PORT);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -48,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
                 if ($_SESSION['user_type'] === 'teacher') {
                     header("refresh:1; url=teacher.php");
                 } else {
-                    header("refresh:1; url=dashboard.php");
+                    header("refresh:1; url=student.php");
                 }
             } else {
                 // First login, go to details page
