@@ -5,22 +5,18 @@ $username = 'root';
 $password = '';
 
 try {
-    $conn = new PDO("mysql:host=$servername;port=3307;dbname=$dbname", $username, $password);
+    $conn = new PDO("mysql:host=$servername;port=3306;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
 
-$lectures = [];
-try {
-    $stmt = $conn->prepare("SELECT name, time, faculty FROM lectures ORDER BY time");
-    $stmt->execute();
-    
-    $lectures = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "Error fetching timetable: " . $e->getMessage();
-}
+$timetable = [];
+$result = $conn->query("SELECT * FROM timetable ORDER BY FIELD(day, 'Monday','Tuesday','Wednesday','Thursday','Friday'), time_slot");
 
+while ($row = $result->fetch_assoc()) {
+    $timetable[$row['day']][$row['time_slot']] = $row;
+}
 $studentName = "Neekunj";
 ?>
 
