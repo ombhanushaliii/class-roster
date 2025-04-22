@@ -12,7 +12,7 @@ $username = "root";
 $password = "";
 $dbname = "class_roster";
 
-$conn = new mysqli($servername, $username, $password, $dbname, 3307);
+$conn = new mysqli($servername, $username, $password, $dbname, 3306);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -33,9 +33,9 @@ if ($check_result->num_rows > 0) {
     $user_type = $user_data['user_type'];
     
     if ($user_type === 'teacher') {
-        header("Location: dashboard_teacher.php");
+        header("Location: teacher.php");
     } else {
-        header("Location: dashboard_student.php");
+        header("Location: student.php");
     }
     exit;
 }
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $redirect = true;
         echo "<script>
                 setTimeout(function(){
-                    window.location.href = 'dashboard_" . $user_type . ".php';
+                    window.location.href =  '{$user_type}.php';
                 }, 1500);
               </script>";
     } else {
@@ -356,6 +356,11 @@ $conn->close();
                 
                 <button type="submit" class="btn">Submit</button>
             </form>
+            <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'teacher'): ?>
+                <div class="teacher-link" style="margin-top: 20px; text-align: center;">
+                    <a href="teacher.php" style="color: #6a5af9; text-decoration: none;">Go to Teacher Dashboard</a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
