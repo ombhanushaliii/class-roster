@@ -24,8 +24,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['SVVNetID']) && isset(
         if (password_verify($password, $user['password'])) {
             $_SESSION['loggedin'] = true;
             $_SESSION['SVVNetID'] = $SVVNetID;
-            echo "<p class='success-message'>Login successful! Redirecting...</p>";
-            header("refresh:1; url=dashboard.php");
+            
+            // Check if user details exist
+            $check_details = $conn->prepare("SELECT id FROM user_details WHERE SVVNetID = ?");
+            $check_details->bind_param("s", $SVVNetID);
+            $check_details->execute();
+            $check_details->store_result();
+            
+            if ($check_details->num_rows > 0) {
+                // User has completed profile, go to dashboard
+                echo "<p class='success-message'>Login successful! Redirecting...</p>";
+                header("refresh:1; url=dashboard.php");
+            } else {
+                // First login, go to details page
+                echo "<p class='success-message'>Login successful! Please complete your profile.</p>";
+                header("refresh:1; url=details.php");
+            }
             exit();
         } else {
             $error_message = "Invalid password!";
