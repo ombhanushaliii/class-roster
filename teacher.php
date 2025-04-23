@@ -336,8 +336,52 @@ $conn->close();
             flex-direction: column;
             border: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            margin-top: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .class-card:hover {
+            background: rgba(106, 90, 249, 0.1);
+            border: 1px solid rgba(106, 90, 249, 0.3);
+        }
+
+        .class-card.active {
+            background: rgba(106, 90, 249, 0.15);
+            border: 1px solid rgba(106, 90, 249, 0.4);
+        }
+
+        .class-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .class-details {
+            color: #aaa;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .attendance-status {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #6a5af9, #8162fc);
+            border-radius: 3px;
         }
 
         .student-list h3 {
