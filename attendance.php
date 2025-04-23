@@ -681,7 +681,7 @@ $conn->close();
                     <i class="fas fa-clipboard-list"></i>
                     <span>Attendance</span>
                 </a>
-                <a href="#" class="menu-item">
+                <a href="report.php" class="menu-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
@@ -690,15 +690,19 @@ $conn->close();
                     <span>Settings</span>
                 </a>
             </div>
-            <div class="user-profile">
+            <a href="profile.php" class="user-profile">
                 <div class="avatar">
-                    <?php echo strtoupper(substr($teacher_data['full_name'], 0, 1)); ?>
+                    <?php if (!empty($teacher_data['profile_picture'])): ?>
+                        <img src="<?php echo $teacher_data['profile_picture']; ?>" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($teacher_data['full_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
                     <h4><?php echo $teacher_data['full_name']; ?></h4>
                     <p><?php echo $teacher_data['department']; ?></p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Main Content -->

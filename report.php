@@ -30,6 +30,7 @@ if ($result->num_rows === 0) {
 }
 
 $teacher_data = $result->fetch_assoc();
+$check_stmt->close();
 
 // Get all classes taught by this teacher
 $classes_stmt = $conn->prepare("SELECT DISTINCT class, section FROM user_details WHERE user_type = 'student' ORDER BY class, section");
@@ -76,119 +77,442 @@ if ($selected_class && $selected_section) {
     }
     $students_stmt->close();
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Reports - Class Roster</title>
+    <title>Reports Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Copy your existing dark theme styles here */
-        .grade-form {
-            background: #1e1e1e;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
+        body {
+            background: #121212;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #aaa;
-        }
-
-        .form-group select,
-        .form-group input {
+        .container {
+            display: flex;
             width: 100%;
-            padding: 10px;
-            background: #2a2a2a;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #fff;
+            min-height: 100vh;
         }
 
-        .submit-btn {
-            background: linear-gradient(45deg, #6a5af9, #8162fc);
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
+        /* Sidebar Styles */
         .sidebar {
-            width: 260px;
+            width: 90px;
             background: #1e1e1e;
-            padding: 20px;
+            padding: 20px 10px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 240px;
         }
 
         .sidebar-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            justify-content: center;
+            padding-bottom: 20px;
             margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
         }
 
-        .sidebar-header i {
-            color: #6a5af9;
-            font-size: 24px;
+        .sidebar:hover .sidebar-header {
+            justify-content: flex-start;
         }
 
         .sidebar-header h2 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
+            margin-left: 10px;
+            display: none;
+            background: linear-gradient(45deg, #6a5af9, #8162fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar:hover .sidebar-header h2 {
+            display: block;
         }
 
         .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            flex: 1;
+            width: 100%;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 8px;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 12px;
+            color: #aaa;
+            margin-bottom: 10px;
             transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            width: 100%;
+            overflow: hidden;
         }
 
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+        .sidebar:hover .menu-item {
+            justify-content: flex-start;
         }
 
-        .menu-item.active {
-            background: #6a5af9;
+        .menu-item:hover, .menu-item.active {
+            background: rgba(106, 90, 249, 0.1);
+            color: #6a5af9;
         }
 
         .menu-item i {
+            font-size: 20px;
+            min-width: 24px;
+        }
+
+        .menu-item span {
+            margin-left: 10px;
+            display: none;
+        }
+
+        .sidebar:hover .menu-item span {
+            display: block;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+            width: 100%;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .sidebar:hover .user-profile {
+            justify-content: flex-start;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6a5af9, #8162fc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #fff;
+            font-weight: 600;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            margin-left: 10px;
+            display: none;
+        }
+
+        .user-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .sidebar:hover .user-info {
+            display: block;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header .date {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Report specific styles can be added here */
+
+        /* Add a subtle animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(106, 90, 249, 0.15), transparent 60%);
+            z-index: -1;
+        }
+
+        /* Card and grid styles */
+        .card {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            color: #ddd;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(106, 90, 249, 0.1);
+            color: #6a5af9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 18px;
-            width: 20px;
+        }
+
+        /* Grade Form Styles */
+        .grade-form {
+            margin-top: 30px;
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .grade-form h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .form-group select,
+        .form-group input {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: #6a5af9;
+            box-shadow: 0 0 0 2px rgba(106, 90, 249, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #6a5af9, #8162fc);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
+        }
+
+        /* Grades Table Styles */
+        .grades-list {
+            margin-top: 30px;
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .grades-list h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grades-table th,
+        .grades-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .grades-table th {
+            color: #aaa;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .grades-table tr:hover td {
+            background: rgba(106, 90, 249, 0.05);
+        }
+
+        .grades-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(77, 255, 136, 0.1);
+            border: 1px solid rgba(77, 255, 136, 0.2);
+            color: #4dff88;
+        }
+
+        .alert-error {
+            background: rgba(255, 77, 77, 0.1);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            color: #ff4d4d;
+        }
+
+        /* Class Grid and Card Styles */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .class-card {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .class-card:hover {
+            background: rgba(106, 90, 249, 0.1);
+            border: 1px solid rgba(106, 90, 249, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .class-card.active {
+            background: rgba(106, 90, 249, 0.15);
+            border: 1px solid rgba(106, 90, 249, 0.4);
+        }
+
+        .class-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .section-name {
+            color: #aaa;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -196,7 +520,7 @@ $conn->close();
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <i class="fas fa-book"></i>
+                <i class="fas fa-book" style="color: #6a5af9; font-size: 24px;"></i>
                 <h2>Class Roster</h2>
             </div>
             <div class="sidebar-menu">
@@ -212,12 +536,29 @@ $conn->close();
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
+                <a href="attendance.php" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Attendance</span>
+                </a>
                 <a href="logout.php" class="menu-item">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
             </div>
-        </div>w
+            <a href="profile.php" class="user-profile">
+                <div class="avatar">
+                    <?php if (!empty($teacher_data['profile_picture'])): ?>
+                        <img src="uploads/<?php echo $teacher_data['profile_picture']; ?>" alt="Profile Picture">
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($teacher_data['full_name'], 0, 1)); ?>
+                    <?php endif; ?>
+                </div>
+                <div class="user-info">
+                    <h4><?php echo $teacher_data['full_name']; ?></h4>
+                    <p><?php echo $teacher_data['department']; ?></p>
+                </div>
+            </a>
+        </div>
 
         <div class="main-content">
             <div class="header">
@@ -325,11 +666,16 @@ $conn->close();
                                 <td><?php echo date('d M Y', strtotime($grade['exam_date'])); ?></td>
                                 <td><?php echo date('d M Y', strtotime($grade['created_at'])); ?></td>
                             </tr>
-                            <?php endwhile; ?>
+                            <?php endwhile;
+                            $grades_stmt->close();
+                            ?>
                         </tbody>
                     </table>
                 </div>
-            <?php endif; ?>
+            <?php endif; 
+            // Close the connection at the very end of the file
+            $conn->close();
+            ?>
         </div>
     </div>
 </body>

@@ -7,6 +7,68 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
+require_once 'config.php';
+
+$conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Create class_schedule table if it doesn't exist
+$conn->query("CREATE TABLE IF NOT EXISTS class_schedule (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    teacher_id VARCHAR(50),
+    class VARCHAR(20),
+    section VARCHAR(10),
+    subject VARCHAR(100),
+    day ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'),
+    start_time TIME,
+    duration INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES user_details(SVVNetID)
+)");
+
+// Handle schedule form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_schedule'])) {
+    $class = $_POST['class'];
+    $section = $_POST['section'];
+    $subject = $_POST['subject'];
+    $day = $_POST['day'];
+    $start_time = $_POST['start_time'];
+    $duration = $_POST['duration'];
+    
+    // Check for schedule conflicts
+    $conflict_check = $conn->prepare("
+        SELECT * FROM class_schedule 
+        WHERE day = ? 
+        AND teacher_id = ?
+        AND (
+            (start_time <= ? AND ADDTIME(start_time, SEC_TO_TIME(duration * 60)) > ?) 
+            OR (start_time < ADDTIME(?, SEC_TO_TIME(? * 60)) AND start_time >= ?)
+        )
+    ");
+    
+    $conflict_check->bind_param("sssssss", $day, $_SESSION['SVVNetID'], $start_time, $start_time, $start_time, $duration, $start_time);
+    $conflict_check->execute();
+    $conflict_result = $conflict_check->get_result();
+    
+    if ($conflict_result->num_rows > 0) {
+        $error_message = "Schedule conflict detected. Please choose a different time slot.";
+    } else {
+        // Insert new schedule
+        $stmt = $conn->prepare("INSERT INTO class_schedule (teacher_id, class, section, subject, day, start_time, duration) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssi", $_SESSION['SVVNetID'], $class, $section, $subject, $day, $start_time, $duration);
+        
+        if ($stmt->execute()) {
+            $success_message = "Schedule added successfully!";
+        } else {
+            $error_message = "Error adding schedule: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+    $conflict_check->close();
+}
+
 // Check if user is a teacher
 require_once 'config.php'; // Include the config file
 
@@ -150,6 +212,7 @@ $conn->close();
             margin-left: 10px;
             display: none;
             background: linear-gradient(45deg, #6a5af9, #8162fc);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -477,6 +540,116 @@ $conn->close();
             text-align: center;
             padding: 20px;
         }
+
+        /* Schedule Management Styles */
+        .schedule-management {
+            margin-top: 20px;
+        }
+
+        .schedule-form {
+            padding: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .form-group select {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus {
+            border-color: #6a5af9;
+            box-shadow: 0 0 0 2px rgba(106, 90, 249, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #6a5af9, #8162fc);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
+        }
+
+        .timetable-section {
+            margin-top: 30px;
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .timetable-container {
+            overflow-x: auto;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .timetable th,
+        .timetable td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+
+        .timetable th {
+            background: #2a2a2a;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .timetable td {
+            background: rgba(42, 42, 42, 0.5);
+            color: #ddd;
+        }
+
+        .timetable td.active {
+            background: rgba(106, 90, 249, 0.1);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .timetable td.lunch {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -508,20 +681,24 @@ $conn->close();
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                <a href="logout.php" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </a>
             </div>
-            <div class="user-profile">
+            <a href="profile.php" class="user-profile">
                 <div class="avatar">
-                    <?php echo strtoupper(substr($teacher_data['full_name'], 0, 1)); ?>
+                    <?php if (!empty($teacher_data['profile_picture'])): ?>
+                        <img src="<?php echo $teacher_data['profile_picture']; ?>" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($teacher_data['full_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
                     <h4><?php echo $teacher_data['full_name']; ?></h4>
                     <p><?php echo $teacher_data['department']; ?></p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Main Content -->
@@ -619,6 +796,138 @@ $conn->close();
                             <p style="text-align: center; padding: 20px;">No classes available yet.</p>
                         </div>
                     <?php endif; ?>
+                </div>
+
+                <!-- Schedule Management Section -->
+                <h2 class="section-header" style="margin-top: 30px;">Schedule Management</h2>
+                <div class="schedule-management">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Add New Schedule</h3>
+                        </div>
+                        <form method="POST" class="schedule-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Class</label>
+                                    <select name="class" required>
+                                        <option value="">Select Class</option>
+                                        <?php foreach ($classes as $class): ?>
+                                            <option value="<?php echo $class['class']; ?>"><?php echo "Class " . $class['class']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Section</label>
+                                    <select name="section" required>
+                                        <option value="">Select Section</option>
+                                        <?php foreach ($classes as $class): ?>
+                                            <option value="<?php echo $class['section']; ?>"><?php echo "Section " . $class['section']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Subject</label>
+                                    <select name="subject" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="English">English</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Day</label>
+                                    <select name="day" required>
+                                        <option value="">Select Day</option>
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thursday">Thursday</option>
+                                        <option value="Friday">Friday</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Start Time</label>
+                                    <select name="start_time" required>
+                                        <option value="">Select Time</option>
+                                        <option value="09:00">9:00 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Duration (minutes)</label>
+                                    <select name="duration" required>
+                                        <option value="60">60 minutes</option>
+                                        <option value="90">90 minutes</option>
+                                        <option value="120">120 minutes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" name="add_schedule" class="submit-btn">
+                                <i class="fas fa-plus"></i> Add Schedule
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Weekly Schedule View -->
+                    <div class="timetable-section">
+                        <div class="section-header">
+                            <h3>Weekly Schedule</h3>
+                        </div>
+                        <div class="timetable-container">
+                            <table class="timetable">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $time_slots = array("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00");
+                                    foreach ($time_slots as $time) {
+                                        echo "<tr>";
+                                        echo "<th>" . date("g:i A", strtotime($time)) . "</th>";
+                                        
+                                        $days = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
+                                        foreach ($days as $day) {
+                                            $schedule_stmt = $conn->prepare("
+                                                SELECT class_schedule.*, user_details.full_name 
+                                                FROM class_schedule 
+                                                LEFT JOIN user_details ON class_schedule.teacher_id = user_details.SVVNetID
+                                                WHERE day = ? AND start_time = ? AND teacher_id = ?
+                                            ");
+                                            $schedule_stmt->bind_param("sss", $day, $time, $SVVNetID);
+                                            $schedule_stmt->execute();
+                                            $schedule = $schedule_stmt->get_result()->fetch_assoc();
+                                            
+                                            if ($schedule) {
+                                                echo "<td class='active'>";
+                                                echo $schedule['subject'] . "<br>";
+                                                echo "Class " . $schedule['class'] . " - " . $schedule['section'];
+                                                echo "</td>";
+                                            } else {
+                                                echo "<td></td>";
+                                            }
+                                        }
+                                        echo "</tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
         </div>

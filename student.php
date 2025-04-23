@@ -185,7 +185,8 @@ if ($announcements_stmt === false) {
 // Get today's date
 $today = date("Y-m-d");
 
-$conn->close();
+// Note: Don't close the connection here as it's needed for the timetable
+// $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -255,6 +256,7 @@ $conn->close();
             margin-left: 10px;
             display: none;
             background: linear-gradient(45deg, #6a5af9, #8162fc);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -1107,7 +1109,32 @@ $conn->close();
             background: rgba(76, 175, 80, 0.1);
             color: #4CAF50;
         }
+
+        /* Add these styles to your existing CSS */
+        .schedule-cell {
+            padding: 5px;
+        }
+
+        .schedule-cell .subject {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .schedule-cell .teacher {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .timetable td.active {
+            background: rgba(106, 90, 249, 0.1);
+        }
+
+        .timetable td.active:hover {
+            background: rgba(106, 90, 249, 0.15);
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -1118,40 +1145,36 @@ $conn->close();
                 <h2>Class Roster</h2>
             </div>
             <div class="sidebar-menu">
-                <a href="#" class="menu-item active">
+                <a href="student.php" class="menu-item active">
                     <i class="fas fa-th-large"></i>
                     <span>Dashboard</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>Timetable</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-book"></i>
-                    <span>Courses</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-tasks"></i>
-                    <span>Assignments</span>
                 </a>
                 <a href="grades.php" class="menu-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Grades</span>
                 </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                <a href="profile.php" class="menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="logout.php" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </a>
             </div>
-            <div class="user-profile">
+            <a href="profile.php" class="user-profile">
                 <div class="avatar">
-                    <?php echo strtoupper(substr($student_data['full_name'], 0, 1)); ?>
+                    <?php if (!empty($student_data['profile_picture'])): ?>
+                        <img src="<?php echo $student_data['profile_picture']; ?>" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($student_data['full_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
                     <h4><?php echo $student_data['full_name']; ?></h4>
-                    <p>Class <?php echo $student_data['class'] . ' - ' . $student_data['section']; ?></p>
+                    <p>Roll No: <?php echo $student_data['roll_number']; ?></p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Main Content -->
@@ -1323,74 +1346,104 @@ $conn->close();
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th>9:00 AM</th>
-                                <td class="active">Mathematics</td>
-                                <td>Physics</td>
-                                <td class="active">Chemistry</td>
-                                <td>English</td>
-                                <td>Computer Science</td>
-                            </tr>
-                            <tr>
-                                <th>10:00 AM</th>
-                                <td>Physics</td>
-                                <td class="active">Chemistry</td>
-                                <td>Mathematics</td>
-                                <td class="active">Computer Science</td>
-                                <td>English</td>
-                            </tr>
-                            <tr>
-                                <th>11:00 AM</th>
-                                <td>Chemistry</td>
-                                <td>Mathematics</td>
-                                <td>Physics</td>
-                                <td>Computer Science</td>
-                                <td class="active">English</td>
-                            </tr>
-                            <tr>
-                                <th>12:00 PM</th>
-                                <td colspan="5" class="lunch">Lunch Break</td>
-                            </tr>
-                            <tr>
-                                <th>1:00 PM</th>
-                                <td>English</td>
-                                <td>Computer Science</td>
-                                <td class="active">Mathematics</td>
-                                <td>Physics</td>
-                                <td>Chemistry</td>
-                            </tr>
-                            <tr>
-                                <th>2:00 PM</th>
-                                <td>Computer Science</td>
-                                <td>English</td>
-                                <td>Physics</td>
-                                <td class="active">Chemistry</td>
-                                <td>Mathematics</td>
-                            </tr>
+                            <?php
+                            $time_slots = array("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00");
+                            foreach ($time_slots as $time) {
+                                echo "<tr>";
+                                echo "<th>" . date("g:i A", strtotime($time)) . "</th>";
+                                
+                                $days = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
+                                foreach ($days as $day) {
+                                    $schedule_stmt = $conn->prepare("
+                                        SELECT cs.*, ud.full_name as teacher_name 
+                                        FROM class_schedule cs
+                                        LEFT JOIN user_details ud ON cs.teacher_id = ud.SVVNetID
+                                        WHERE cs.day = ? 
+                                        AND cs.start_time = ? 
+                                        AND cs.class = ?
+                                        AND cs.section = ?
+                                    ");
+                                    $schedule_stmt->bind_param("ssss", $day, $time, $student_data['class'], $student_data['section']);
+                                    $schedule_stmt->execute();
+                                    $schedule = $schedule_stmt->get_result()->fetch_assoc();
+                                    $schedule_stmt->close();
+                                    
+                                    if ($schedule) {
+                                        echo "<td class='active'>";
+                                        echo "<div class='schedule-cell'>";
+                                        echo "<div class='subject'>" . $schedule['subject'] . "</div>";
+                                        echo "<div class='teacher'>" . $schedule['teacher_name'] . "</div>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                    } else {
+                                        echo "<td></td>";
+                                    }
+                                }
+                                echo "</tr>";
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
             </div>
+            <?php $conn->close(); // Move connection close to after all database operations ?>
         </div>
     </div>
 
     <script>
-        // Add any JavaScript functionality here
+        // Add this script at the end of body, before closing body tag
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle notification clicks
-            const notification = document.querySelector('.notification');
-            if (notification) {
-                notification.addEventListener('click', function() {
-                    // Add notification functionality
-                });
-            }
+            // Add the window.jsPDF definition
+            window.jsPDF = window.jspdf.jsPDF;
 
-            // Handle download report card
             const downloadBtn = document.querySelector('.download-btn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
-                    // Add download functionality
-                    alert('Downloading report card...');
+                    const reportSection = document.querySelector('.report-card-section');
+                    
+                    // Create PDF document
+                    const doc = new jsPDF();
+                    
+                    // Add title
+                    doc.setFontSize(20);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('Student Report Card', 105, 20, { align: 'center' });
+                    
+                    // Add student details
+                    doc.setFontSize(12);
+                    doc.text('Student Details:', 20, 40);
+                    doc.text('Name: <?php echo $student_data['full_name']; ?>', 20, 50);
+                    doc.text('Roll Number: <?php echo $student_data['roll_number']; ?>', 20, 60);
+                    doc.text('Class: <?php echo $student_data['class']; ?>', 20, 70);
+                    doc.text('Section: <?php echo $student_data['section']; ?>', 20, 80);
+                    
+                    // Add grades table header
+                    doc.setFillColor(230, 230, 230);
+                    doc.rect(20, 100, 170, 10, 'F');
+                    doc.text('Subject', 30, 107);
+                    doc.text('Marks', 150, 107);
+                    
+                    // Add grades
+                    let yPos = 120;
+                    <?php foreach ($grades as $index => $grade): ?>
+                    doc.text('<?php echo $grade['subject_name']; ?>', 30, yPos);
+                    doc.text('<?php echo round($grade['average_marks'], 2); ?>%', 150, yPos);
+                    yPos += 10;
+                    <?php endforeach; ?>
+                    
+                    // Add attendance
+                    doc.text('Attendance Overview:', 20, yPos + 20);
+                    doc.text('Total Classes: <?php echo $attendance_data['total_classes']; ?>', 30, yPos + 30);
+                    doc.text('Classes Attended: <?php echo $attendance_data['present_count']; ?>', 30, yPos + 40);
+                    doc.text('Attendance Rate: <?php echo $attendance_percentage; ?>%', 30, yPos + 50);
+                    
+                    // Add footer
+                    doc.setFontSize(10);
+                    doc.text('Generated on: ' + new Date().toLocaleDateString(), 20, 280);
+                    doc.text('K.J. Somaiya Institute of Technology', 105, 280, { align: 'center' });
+                    
+                    // Save PDF
+                    doc.save('Student_Report_Card.pdf');
                 });
             }
         });
