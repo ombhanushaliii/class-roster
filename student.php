@@ -53,24 +53,38 @@ while ($schedule = $schedule_result->fetch_assoc()) {
 }
 $schedule_stmt->close();
 
-// Get student's attendance
-$attendance_stmt = $conn->prepare("SELECT 
-    COUNT(CASE WHEN attendance_status = 'present' THEN 1 END) as present_count,
-    COUNT(CASE WHEN attendance_status = 'absent' THEN 1 END) as absent_count,
-    COUNT(*) as total_classes
-    FROM student_attendance 
-    WHERE student_id = ? AND class = ? AND section = ?");
+// Update the attendance query (around line 50-60)
+$attendance_stmt = $conn->prepare("
+    SELECT 
+        COUNT(*) as total_classes,
+        COUNT(CASE WHEN status = 'present' THEN 1 END) as present_count,
+        COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_count
+    FROM attendance 
+    WHERE SVVNetID = ? 
+    AND class = ? 
+    AND section = ?
+    AND attendance_date <= CURRENT_DATE");
+
 $attendance_stmt->bind_param("sss", $SVVNetID, $class, $section);
 $attendance_stmt->execute();
 $attendance_result = $attendance_stmt->get_result();
 $attendance_data = $attendance_result->fetch_assoc();
-$attendance_stmt->close();
+
+// Set default values if no attendance records found
+if (!$attendance_data['total_classes']) {
+    $attendance_data = [
+        'total_classes' => 0,
+        'present_count' => 0,
+        'absent_count' => 0
+    ];
+}
 
 // Calculate attendance percentage
-$attendance_percentage = 0;
-if ($attendance_data['total_classes'] > 0) {
-    $attendance_percentage = round(($attendance_data['present_count'] / $attendance_data['total_classes']) * 100);
-}
+$attendance_percentage = $attendance_data['total_classes'] > 0 
+    ? round(($attendance_data['present_count'] / $attendance_data['total_classes']) * 100) 
+    : 0;
+
+$attendance_stmt->close();
 
 // Get classmates in the same class and section
 $classmates_stmt = $conn->prepare("SELECT * FROM user_details WHERE user_type = 'student' AND class = ? AND section = ? AND SVVNetID != ? ORDER BY full_name ASC LIMIT 5");
@@ -1120,7 +1134,7 @@ $conn->close();
                     <i class="fas fa-tasks"></i>
                     <span>Assignments</span>
                 </a>
-                <a href="#" class="menu-item">
+                <a href="grades.php" class="menu-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Grades</span>
                 </a>

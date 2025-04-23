@@ -116,45 +116,70 @@ $conn->close();
 
         /* Sidebar Styles */
         .sidebar {
-            width: 240px;
+            width: 90px;
             background: #1e1e1e;
-            padding: 20px;
+            padding: 20px 10px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 240px;
         }
 
         .sidebar-header {
             display: flex;
             align-items: center;
+            justify-content: center;
             padding-bottom: 20px;
             margin-bottom: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .sidebar:hover .sidebar-header {
+            justify-content: flex-start;
         }
 
         .sidebar-header h2 {
             font-size: 22px;
             font-weight: 600;
             margin-left: 10px;
+            display: none;
             background: linear-gradient(45deg, #6a5af9, #8162fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        .sidebar:hover .sidebar-header h2 {
+            display: block;
+        }
+
         .sidebar-menu {
             flex: 1;
+            width: 100%;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            border-radius: 8px;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 12px;
             color: #aaa;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             transition: all 0.3s ease;
             cursor: pointer;
             text-decoration: none;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar:hover .menu-item {
+            justify-content: flex-start;
         }
 
         .menu-item:hover, .menu-item.active {
@@ -163,16 +188,31 @@ $conn->close();
         }
 
         .menu-item i {
-            margin-right: 10px;
-            font-size: 18px;
+            font-size: 20px;
+            min-width: 24px;
+        }
+
+        .menu-item span {
+            margin-left: 10px;
+            display: none;
+        }
+
+        .sidebar:hover .menu-item span {
+            display: block;
         }
 
         .user-profile {
             display: flex;
             align-items: center;
-            padding: 15px;
+            justify-content: center;
+            padding: 15px 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: auto;
+            width: 100%;
+        }
+
+        .sidebar:hover .user-profile {
+            justify-content: flex-start;
         }
 
         .avatar {
@@ -186,21 +226,16 @@ $conn->close();
             font-size: 16px;
             color: #fff;
             font-weight: 600;
-            margin-right: 10px;
+            flex-shrink: 0;
         }
 
         .user-info {
-            flex: 1;
+            margin-left: 10px;
+            display: none;
         }
 
-        .user-info h4 {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .user-info p {
-            font-size: 12px;
-            color: #aaa;
+        .sidebar:hover .user-info {
+            display: block;
         }
 
         /* Main Content Styles */
@@ -301,41 +336,6 @@ $conn->close();
             flex-direction: column;
             border: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: #fff;
-        }
-
-        .class-card:hover {
-            background: rgba(106, 90, 249, 0.1);
-            border: 1px solid rgba(106, 90, 249, 0.3);
-        }
-
-        .class-card.active {
-            background: rgba(106, 90, 249, 0.15);
-            border: 1px solid rgba(106, 90, 249, 0.4);
-        }
-
-        .class-name {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-
-        .class-details {
-            color: #aaa;
-            font-size: 14px;
-        }
-
-        .class-details span {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .student-list {
-            background: #1e1e1e;
-            border-radius: 15px;
-            padding: 20px;
             margin-top: 20px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -456,11 +456,11 @@ $conn->close();
                     <i class="fas fa-calendar-alt"></i>
                     <span>Schedule</span>
                 </a>
-                <a href="#" class="menu-item">
+                <a href="attendance.php" class="menu-item">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Attendance</span>
                 </a>
-                <a href="#" class="menu-item">
+                <a href="report.php" class="menu-item">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
